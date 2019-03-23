@@ -1,14 +1,17 @@
 {
-  "name": "distill-css",
-  "description": "PACKAGE_DESCRIPTION",
+  "name": "extract-css-core",
+  "description": "Extract all CSS from a given url, both server side and client side rendered.",
   "version": "0.1.0",
   "homepage": "https://www.projectwallace.com/oss",
-  "repository": "PACKAGE_REPOSITORY",
-  "issues": "PACKAGE_ISSUES",
+  "repository": "https://github.com/bartveneman/extract-css-core",
+  "issues": "https://github.com/bartveneman/extract-css-core/issues",
   "license": "MIT",
   "author": "Bart Veneman",
   "keywords": [
-    "PACKAGE_KEYWORD"
+    "extract",
+    "css",
+    "scrape",
+    "get-css"
   ],
   "scripts": {
     "test": "xo && ava test"
@@ -21,7 +24,25 @@
     "node": ">=8.0"
   },
   "xo": {
-    "prettier": true
+    "prettier": true,
+    "rules": {
+      "ava/no-skip-test": "warn"
+    }
+  },
+  "prettier": {
+    "useTabs": true,
+    "semi": false,
+    "singleQuote": true,
+    "bracketSpacing": false,
+    "proseWrap": "always",
+    "overrides": [
+      {
+        "files": "*.json",
+        "options": {
+          "useTabs": false
+        }
+      }
+    ]
   },
   "devDependencies": {
     "ava": "^1.3.1",
