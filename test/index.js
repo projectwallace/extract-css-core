@@ -129,7 +129,8 @@ test('it accepts a custom Chrome and Puppeteer version for use on AWS', async t 
 	const actual = await extractCss(server.url + path, {
 		customBrowser: {
 			executablePath: chromium.path,
-			customPuppeteer: puppeteerCore
+			puppeteer: puppeteerCore,
+			args: chromium.args
 		}
 	})
 

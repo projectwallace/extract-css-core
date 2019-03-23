@@ -9,7 +9,7 @@ InvalidUrlError.prototype = Error.prototype
 
 module.exports = async (
 	url,
-	{debug = false, waitUntil = 'networkidle2', customBrowser = {}} = {}
+	{debug = false, waitUntil = 'networkidle2', customBrowser = null} = {}
 ) => {
 	const browserOptions = {
 		headless: debug !== true,
@@ -22,10 +22,12 @@ module.exports = async (
 	if (
 		customBrowser &&
 		customBrowser.executablePath &&
-		customBrowser.customPuppeteer
+		customBrowser.customPuppeteer &&
+		customBrowser.args
 	) {
 		browserOptions.executablePath = customBrowser.executablePath
-		browserOptions.puppeteer = customBrowser.customPuppeteer
+		browserOptions.puppeteer = customBrowser.puppeteer
+		browserOptions.args = customBrowser.args
 	}
 
 	// Setup a browser instance
