@@ -4,9 +4,9 @@
 </div>
 
 [![NPM Version](https://img.shields.io/npm/v/extract-css-core.svg)](https://www.npmjs.com/package/extract-css-core)
+[![Weekly downloads](https://img.shields.io/npm/dw/extract-css-core.svg)](https://www.npmjs.com/package/extract-css-core)
 [![Build Status](https://travis-ci.org/bartveneman/extract-css-core.svg?branch=master)](https://travis-ci.org/bartveneman/extract-css-core)
 [![Known Vulnerabilities](https://snyk.io/test/github/bartveneman/extract-css-core/badge.svg)](https://snyk.io/test/github/bartveneman/extract-css-core)
-[![Weekly downloads](https://img.shields.io/npm/dw/extract-css-core.svg)](https://www.npmjs.com/package/extract-css-core)
 ![Dependencies Status](https://img.shields.io/david/bartveneman/extract-css-core.svg)
 ![Dependencies Status](https://img.shields.io/david/dev/bartveneman/extract-css-core.svg)
 [![XO code style](https://img.shields.io/badge/code_style-XO-5ed9c7.svg)](https://github.com/sindresorhus/xo)
@@ -33,7 +33,9 @@ is the power behind finding most of the CSS.
 
 Currently, there is no solution to get the CSS from modules that use
 [Styled Components](https://www.styled-components.com) or something similar. Any
-help resolving this issue will be very much appreciated.
+help resolving this issue will be very much appreciated. Please contribute to
+the relevant
+[GitHub issue](https://github.com/bartveneman/extract-css-core/issues/1).
 
 ## Installation
 
