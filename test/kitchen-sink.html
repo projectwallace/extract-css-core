@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+
+    <!-- Server generated link -->
+    <link rel="stylesheet" href="fixture.css" />
+
+    <!-- Server generated style -->
+    <style>
+      .server-style {
+        counter-increment: 2;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Title</h1>
+
+    <script>
+      // Client generated style
+      var style = document.createElement("style");
+      style.textContent = ".js-style { counter-increment: 3; }";
+      document.body.appendChild(style);
+
+      // Client generated link
+      var style = document.createElement("link");
+      style.href = "fixture.css";
+      style.rel = "stylesheet";
+      document.head.appendChild(style);
+    </script>
+  </body>
+</html>
