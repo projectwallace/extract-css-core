@@ -9,29 +9,12 @@ InvalidUrlError.prototype = Error.prototype
 
 module.exports = async (
 	url,
-	{debug = false, waitUntil = 'networkidle2', customBrowser = null} = {}
+	{debug = false, waitUntil = 'networkidle2'} = {}
 ) => {
-	const browserOptions = {
-		headless: debug !== true,
-		puppeteer
-	}
-
-	// Replace the puppeteer instance if a custom one is provided
-	// This also means that the executablePath needs to be set to
-	// a custom path where some chromium instance is running.
-	if (
-		customBrowser &&
-		customBrowser.executablePath &&
-		customBrowser.puppeteer &&
-		customBrowser.args
-	) {
-		browserOptions.executablePath = customBrowser.executablePath
-		browserOptions.puppeteer = customBrowser.puppeteer
-		browserOptions.args = customBrowser.args
-	}
-
 	// Setup a browser instance
-	const browser = await browserOptions.puppeteer.launch(browserOptions)
+	const browser = await puppeteer.launch({
+		headless: debug !== true
+	})
 
 	// Create a new page and navigate to it
 	const page = await browser.newPage()

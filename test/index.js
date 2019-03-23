@@ -113,30 +113,6 @@ test('it rejects on an invalid url', async t => {
 	await t.throwsAsync(extractCss('site.example'))
 })
 
-test('it accepts a custom Chrome and Puppeteer version for use on AWS', async t => {
-	const chromium = require('chromium')
-	const puppeteerCore = require('puppeteer-core')
-
-	const path = '/custom-chrome'
-	const kitchenSinkExample = readFileSync(
-		resolve(__dirname, 'kitchen-sink.html'),
-		'utf8'
-	)
-	server.get(path, (req, res) => {
-		res.send(kitchenSinkExample)
-	})
-
-	const actual = await extractCss(server.url + path, {
-		customBrowser: {
-			executablePath: chromium.path,
-			puppeteer: puppeteerCore,
-			args: chromium.args
-		}
-	})
-
-	t.snapshot(actual)
-})
-
 // TODO: write coverage for dynamically inserted style tags
 test.skip('it finds CSS-in-JS (styled components)', async t => {
 	const path = '/css-in-js'

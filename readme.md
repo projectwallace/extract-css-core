@@ -79,27 +79,6 @@ Type: `String` Default: `networkidle2`
 Can be any value as provided by the
 [Puppeteer docs](https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#pagegotourl-options).
 
-#### customBrowser
-
-Type: `Object` Default: `null`
-
-This is useful if you want to run extract-css on AWS Lambda for example.
-
-##### executablePath
-
-Type: `String` Default: `null`
-
-Pass in the executable path for a custom Chromium instance.
-
-##### customPuppeteer
-
-Type: `Object` Default: `null`
-
-You probably want to provide
-[puppeteer-core](https://www.npmjs.com/package/puppeteer-core) for a custom
-browser instead of [puppeteer](https://www.npmjs.com/package/puppeteer) which
-brings it's own Chromium instance.
-
 ## Related
 
 - [extract-css lambda](https://github.com/bartveneman/extract-css) - Extract CSS
