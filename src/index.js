@@ -22,7 +22,7 @@ module.exports = async (
 	if (
 		customBrowser &&
 		customBrowser.executablePath &&
-		customBrowser.customPuppeteer &&
+		customBrowser.puppeteer &&
 		customBrowser.args
 	) {
 		browserOptions.executablePath = customBrowser.executablePath
