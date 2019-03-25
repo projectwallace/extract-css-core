@@ -2,7 +2,7 @@ const test = require('ava')
 const extractCss = require('..')
 const {validateBrowserOverride} = require('../src/validate')
 
-test('it does basic validation on browserOverride', async t => {
+test('it does basic validation on browserOverride', t => {
 	const failures = [
 		{},
 		{executablePath: null},
