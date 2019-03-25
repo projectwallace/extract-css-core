@@ -2,6 +2,9 @@ const test = require('ava')
 const createTestServer = require('create-test-server')
 const {readFileSync} = require('fs')
 const {resolve} = require('path')
+const chromium = require('chromium')
+const puppeteerCore = require('puppeteer-core')
+
 const extractCss = require('..')
 
 let server
@@ -113,19 +116,22 @@ test('it rejects on an invalid url', async t => {
 	await t.throwsAsync(extractCss('site.example'))
 })
 
-// TODO: write coverage for dynamically inserted style tags
-test.skip('it finds CSS-in-JS (styled components)', async t => {
-	const path = '/css-in-js'
-	const cssInJsExampleHtml = readFileSync(
-		resolve(__dirname, 'css-in-js.html'),
+test('it accepts a browser override for usage with other browsers', async t => {
+	const path = '/browser-override'
+	const kitchenSinkExample = readFileSync(
+		resolve(__dirname, 'kitchen-sink.html'),
 		'utf8'
 	)
 	server.get(path, (req, res) => {
-		res.send(cssInJsExampleHtml)
+		res.send(kitchenSinkExample)
+	})
+	const actual = await extractCss(server.url + path, {
+		browserOverride: {
+			executablePath: chromium.path,
+			puppeteer: puppeteerCore,
+			args: []
+		}
 	})
 
-	const actual = await extractCss(server.url + path)
-	const expected = 'lots of JS generated classNames and styles'
-
-	t.is(actual, expected)
+	t.snapshot(actual)
 })
