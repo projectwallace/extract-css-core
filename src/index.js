@@ -6,6 +6,8 @@ function InvalidUrlError({url, statusCode, statusText}) {
 	this.message = `There was an error retrieving CSS from ${url}.\n\tHTTP status code: ${statusCode} (${statusText})`
 }
 
+InvalidUrlError.prototype = Error.prototype
+
 module.exports = async (
 	url,
 	{debug = false, waitUntil = 'networkidle2', browserOverride = null} = {}
