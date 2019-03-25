@@ -65,19 +65,40 @@ String.
 
 Type: `Object`
 
+Default: `null`
+
 #### debug
 
-Type: `Boolean` Default: `false`
+Type: `Boolean`
+
+Default: `false`
 
 Set to `true` if you want a Chromium window to open as it works to get all the
 CSS from the page.
 
 #### waitUntil
 
-Type: `String` Default: `networkidle2`
+Type: `String`
+
+Default: `networkidle2`
 
 Can be any value as provided by the
 [Puppeteer docs](https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#pagegotourl-options).
+
+#### browserOverride
+
+Type: `Object`
+
+Default: `null`
+
+An object consisting of the following fields:
+
+- `executablePath`: the path to a Chromium binary
+- `puppeteer`: a Puppeteer instance
+- `args`: arguments to start Chromium with
+
+See the `test` directory for implementation examples. This option exists
+primarily for use with [extract-css.now.sh](https://extract-css.now.sh)
 
 ## Related
 
