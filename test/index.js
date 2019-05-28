@@ -26,13 +26,9 @@ test('it fetches css from a page with CSS in a server generated <link> inside th
 	const url = '/server-link-head'
 	server.get(url, (req, res) => {
 		res.send(`
-			<!doctype>
-			<html>
-				<head>
-					<link rel="stylesheet" href="fixture.css" />
-				</head>
-			</html>
-    `)
+			<!doctype html>
+			<link rel="stylesheet" href="fixture.css" />
+		`)
 	})
 
 	const actual = await extractCss(server.url + url)
@@ -44,13 +40,9 @@ test('it fetches css from a page with CSS in server generated <style> inside the
 	const url = '/server-style-head'
 	server.get(url, (req, res) => {
 		res.send(`
-			<!doctype>
-			<html>
-				<head>
-					<style>${expected.trim()}</style>
-				</head>
-			</html>
-    `)
+			<!doctype html>
+			<style>${expected.trim()}</style>
+		`)
 	})
 
 	const actual = await extractCss(server.url + url)
@@ -104,6 +96,7 @@ test('it combines server generated <link> and <style> tags with client side crea
 
 	t.snapshot(actual)
 	t.true(actual.includes('counter-increment: 2;'))
+	t.true(actual.includes('counter-increment: 3;'))
 })
 
 test('it rejects if the url has an HTTP error status', async t => {
@@ -119,20 +112,24 @@ test('it rejects on an invalid url', async t => {
 
 test('it accepts a browser override for usage with other browsers', async t => {
 	const path = '/browser-override'
-	const kitchenSinkExample = readFileSync(
-		resolve(__dirname, 'kitchen-sink.html'),
-		'utf8'
-	)
 	server.get(path, (req, res) => {
-		res.send(kitchenSinkExample)
+		res.send(`
+		<!doctype html>
+		<style>
+			body::before {
+				content: ${req.headers['user-agent']};
+			}
+		</style>
+	`)
 	})
 	const customBrowser = await puppeteerCore.launch({
-		executablePath: chromium.path
+		executablePath: chromium.path,
+		args: ["--user-agent='Extract CSS Core'"]
 	})
 	const actual = await extractCss(server.url + path, {customBrowser})
 
 	t.snapshot(actual)
-	t.true(actual.includes('counter-increment: 2;'))
+	t.true(actual.includes("content: 'Extract CSS Core';"))
 })
 
 test('it rejects on an invalid customBrowser option', async t => {
