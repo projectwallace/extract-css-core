@@ -41,8 +41,7 @@ the relevant
 
 ```sh
 npm install extract-css-core
-
-# Or with Yarn
+# or
 yarn add extract-css-core
 ```
 
@@ -51,7 +50,7 @@ yarn add extract-css-core
 ```js
 const extractCss = require('extract-css-core')
 
-extractCss('http://www.projectwallace.com').then(css => console.log(css))
+const css = await extractCss('http://www.projectwallace.com')
 ```
 
 ## API
@@ -67,15 +66,6 @@ Type: `Object`
 
 Default: `null`
 
-#### debug
-
-Type: `Boolean`
-
-Default: `false`
-
-Set to `true` if you want a Chromium window to open as it works to get all the
-CSS from the page.
-
 #### waitUntil
 
 Type: `String`
@@ -85,24 +75,21 @@ Default: `networkidle2`
 Can be any value as provided by the
 [Puppeteer docs](https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#pagegotourl-options).
 
-#### browserOverride
+#### customBrowser
 
-Type: `Object`
+Type: `Browser`
 
 Default: `null`
 
-An object consisting of the following fields:
-
-- `executablePath`: the path to a Chromium binary
-- `puppeteer`: a Puppeteer instance
-- `args`: arguments to start Chromium with
-
-See the `test` directory for implementation examples. This option exists
-primarily for use with [extract-css.now.sh](https://extract-css.now.sh)
+A
+[Puppeteer Browser](https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#class-browser)
+instance. See the `test` directory for implementation examples. This option
+exists primarily for use with
+[extract-css](https://github.com/bartveneman/extract-css)
 
 ## Related
 
-- [extract-css lambda](https://github.com/bartveneman/extract-css) - Extract CSS
+- [extract-css](https://github.com/bartveneman/extract-css) - Extract CSS
   running as a serverless function
 - [get-css](https://github.com/cssstats/cssstats/tree/master/packages/get-css) -
   The original get-css

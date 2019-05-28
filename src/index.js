@@ -1,5 +1,4 @@
 const puppeteer = require('puppeteer')
-const {validateBrowserOverride} = require('./validate')
 
 function InvalidUrlError({url, statusCode, statusText}) {
 	this.name = 'InvalidUrlError'
@@ -10,27 +9,19 @@ InvalidUrlError.prototype = Error.prototype
 
 module.exports = async (
 	url,
-	{debug = false, waitUntil = 'networkidle2', browserOverride = null} = {}
+	{waitUntil = 'networkidle2', customBrowser = null} = {}
 ) => {
-	// Basic validation for browserOverride
-	if (browserOverride !== null) {
-		validateBrowserOverride(browserOverride)
-	}
-
-	// Setup the minimal browser options that we need to launch
-	const browserOptions = {
-		headless: debug !== true,
-		executablePath: browserOverride
-			? browserOverride.executablePath
-			: puppeteer.executablePath(),
-		args: browserOverride ? browserOverride.args : []
+	if (
+		customBrowser !== null &&
+		(!customBrowser.isConnected || !customBrowser.isConnected())
+	) {
+		return Promise.reject(
+			new TypeError('The `customBrowser` option is invalid')
+		)
 	}
 
 	// Setup a browser instance
-	const browser = await (
-		(browserOverride && browserOverride.puppeteer) ||
-		puppeteer
-	).launch(browserOptions)
+	const browser = customBrowser || (await puppeteer.launch())
 
 	// Create a new page and navigate to it
 	const page = await browser.newPage()

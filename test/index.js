@@ -103,6 +103,7 @@ test('it combines server generated <link> and <style> tags with client side crea
 	const actual = await extractCss(server.url + path)
 
 	t.snapshot(actual)
+	t.true(actual.includes('counter-increment: 2;'))
 })
 
 test('it rejects if the url has an HTTP error status', async t => {
@@ -125,13 +126,18 @@ test('it accepts a browser override for usage with other browsers', async t => {
 	server.get(path, (req, res) => {
 		res.send(kitchenSinkExample)
 	})
-	const actual = await extractCss(server.url + path, {
-		browserOverride: {
-			executablePath: chromium.path,
-			puppeteer: puppeteerCore,
-			args: []
-		}
+	const customBrowser = await puppeteerCore.launch({
+		executablePath: chromium.path
 	})
+	const actual = await extractCss(server.url + path, {customBrowser})
 
 	t.snapshot(actual)
+	t.true(actual.includes('counter-increment: 2;'))
+})
+
+test('it rejects on an invalid customBrowser option', async t => {
+	const path = '/browser-override'
+	await t.throwsAsync(extractCss(server.url + path, {customBrowser: {}}), {
+		message: 'The `customBrowser` option is invalid'
+	})
 })
