@@ -48,17 +48,18 @@ module.exports = async (
 	// but not all...
 	const coverage = await page.coverage.stopCSSCoverage()
 
-	// Fetch all <style> tags from the page, because the coverage
-	// API may have missed some JS-generated <style> tags.
-	// Some of them *were* already caught by the coverage API,
-	// but they will be removed later on to prevent duplicates.
-	const styleTagsCss = (await page.$$eval('style', styles => {
-		// Get the text inside each <style> tag and trim() the
-		// results to prevent all the inside-html indentation
-		// clogging up the results and making it look
-		// bigger than it actually is
-		return styles.map(style => style.innerHTML.trim())
-	})).join('')
+	// Get all CSS generated with the CSSStyleSheet API
+	// See: https://developer.mozilla.org/en-US/docs/Web/API/CSSRule/cssText
+	const styleSheetsApiCss = await page.evaluate(() => {
+		/* global document */
+		return [...document.styleSheets]
+			.map(stylesheet =>
+				[...stylesheet.cssRules]
+					.map(cssStyleRule => cssStyleRule.cssText)
+					.join('')
+			)
+			.join('')
+	})
 
 	await browser.close()
 
@@ -73,5 +74,5 @@ module.exports = async (
 		.map(({text}) => text)
 		.join('')
 
-	return Promise.resolve(coverageCss + styleTagsCss)
+	return Promise.resolve(styleSheetsApiCss + coverageCss)
 }
