@@ -8,13 +8,13 @@ const puppeteerCore = require('puppeteer-core')
 const extractCss = require('..')
 
 let server
-const expected = readFileSync(resolve(__dirname, 'fixture.css'), 'utf8')
+const fixture = readFileSync(resolve(__dirname, 'fixture.css'), 'utf8')
 
 test.before(async () => {
 	server = await createTestServer()
 
 	server.get('/fixture.css', (req, res) => {
-		res.send(expected)
+		res.send(fixture)
 	})
 })
 
@@ -27,11 +27,16 @@ test('it fetches css from a page with CSS in a server generated <link> inside th
 	server.get(url, (req, res) => {
 		res.send(`
 			<!doctype html>
-			<link rel="stylesheet" href="fixture.css" />
+			<html>
+				<head>
+					<link rel="stylesheet" href="fixture.css" />
+				</head>
+			</html>
 		`)
 	})
 
 	const actual = await extractCss(server.url + url)
+	const expected = fixture
 
 	t.is(actual, expected)
 })
@@ -41,13 +46,14 @@ test('it fetches css from a page with CSS in server generated <style> inside the
 	server.get(url, (req, res) => {
 		res.send(`
 			<!doctype html>
-			<style>${expected.trim()}</style>
+			<style>${fixture}</style>
 		`)
 	})
 
 	const actual = await extractCss(server.url + url)
+	const expected = 'body { color: teal; }'
 
-	t.is(actual, expected.trim())
+	t.is(actual, expected)
 })
 
 test('it finds JS generated <link /> CSS', async t => {
@@ -62,6 +68,7 @@ test('it finds JS generated <link /> CSS', async t => {
 	})
 
 	const actual = await extractCss(server.url + path)
+	const expected = fixture
 
 	t.is(actual, expected)
 })
@@ -77,7 +84,26 @@ test('it finds JS generated <style /> CSS', async t => {
 	})
 
 	const actual = await extractCss(server.url + url, {waitUntil: 'load'})
-	const expected = `body { color: teal; }`
+	const expected = 'body { color: teal; }'
+
+	t.is(actual, expected)
+})
+
+test('it finds css-in-js, like Styled Components', async t => {
+	const url = '/css-in-js'
+	const cssInJsExampleHtml = readFileSync(
+		resolve(__dirname, 'css-in-js.html'),
+		'utf8'
+	)
+	server.get(url, (req, res) => {
+		res.send(cssInJsExampleHtml)
+	})
+
+	const actual = await extractCss(server.url + url, {waitUntil: 'load'})
+	// Color is RGB instead of Hex, because of serialization:
+	// https://www.w3.org/TR/cssom-1/#serializing-css-values
+	const expected =
+		'html { color: rgb(255, 0, 0); }.hJHBhT { color: blue; font-family: sans-serif; font-size: 3em; }'
 
 	t.is(actual, expected)
 })
@@ -94,9 +120,11 @@ test('it combines server generated <link> and <style> tags with client side crea
 
 	const actual = await extractCss(server.url + path)
 
+	t.true(actual.includes('content: "js-style";'))
+	t.true(actual.includes('content: "server-style";'))
+	t.true(actual.includes(`body {`))
+	t.true(actual.includes(`color: teal;`))
 	t.snapshot(actual)
-	t.true(actual.includes('counter-increment: 2;'))
-	t.true(actual.includes('counter-increment: 3;'))
 })
 
 test('it rejects if the url has an HTTP error status', async t => {
@@ -116,20 +144,17 @@ test('it accepts a browser override for usage with other browsers', async t => {
 		res.send(`
 		<!doctype html>
 		<style>
-			body::before {
-				content: ${req.headers['user-agent']};
-			}
+			body::before { content: "${req.headers['user-agent']}"; }
 		</style>
 	`)
 	})
 	const customBrowser = await puppeteerCore.launch({
 		executablePath: chromium.path,
-		args: ["--user-agent='Extract CSS Core'"]
+		args: ['--user-agent=Extract CSS Core']
 	})
 	const actual = await extractCss(server.url + path, {customBrowser})
 
-	t.snapshot(actual)
-	t.true(actual.includes("content: 'Extract CSS Core';"))
+	t.is(actual, 'body::before { content: "Extract CSS Core"; }')
 })
 
 test('it rejects on an invalid customBrowser option', async t => {
