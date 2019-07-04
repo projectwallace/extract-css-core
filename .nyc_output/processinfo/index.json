@@ -1,1 +1,0 @@
-{"processes":{"09c5e365-77b7-49ac-ae2b-2b7d3158399a":{"parent":null,"children":["5df11076-ceea-47ff-8dba-9fde7457ec74"]},"5df11076-ceea-47ff-8dba-9fde7457ec74":{"parent":"09c5e365-77b7-49ac-ae2b-2b7d3158399a","children":[]}},"files":{"/Users/bartveneman/www/projectwallace/modules/extract-css-core/src/index.js":["5df11076-ceea-47ff-8dba-9fde7457ec74"]},"externalIds":{}}

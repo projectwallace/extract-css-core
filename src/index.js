@@ -26,7 +26,7 @@ module.exports = async (
 	// Create a new page and navigate to it
 	const page = await browser.newPage()
 
-	// // Start CSS coverage. This is the meat and bones of this module
+	// Start CSS coverage. This is the meat and bones of this module
 	await page.coverage.startCSSCoverage()
 	const response = await page.goto(url, {waitUntil})
 
