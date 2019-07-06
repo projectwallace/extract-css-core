@@ -53,6 +53,7 @@ module.exports = async (
 	const styleSheetsApiCss = await page.evaluate(() => {
 		/* global document */
 		return [...document.styleSheets]
+			.filter(stylesheet => stylesheet.href === null)
 			.map(stylesheet =>
 				[...stylesheet.cssRules]
 					.map(cssStyleRule => cssStyleRule.cssText)
