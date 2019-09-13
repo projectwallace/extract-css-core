@@ -122,8 +122,8 @@ test('it combines server generated <link> and <style> tags with client side crea
 
 	t.true(actual.includes('content: "js-style";'))
 	t.true(actual.includes('content: "server-style";'))
-	t.true(actual.includes(`body {`))
-	t.true(actual.includes(`color: teal;`))
+	t.true(actual.includes('body {'))
+	t.true(actual.includes('color: teal;'))
 	t.snapshot(actual)
 })
 
