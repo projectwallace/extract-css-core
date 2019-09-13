@@ -56,6 +56,24 @@ test('it fetches css from a page with CSS in server generated <style> inside the
 	t.is(actual, expected)
 })
 
+test('it finds server generated inline css', async t => {
+	const url = '/server-inline-css'
+	server.get(url, (req, res) => {
+		res.send(`
+			<!doctype html>
+			<div style="color: red;">inline style</div>
+		`)
+	})
+
+	const actual = await extractCss(server.url + url)
+	const expected = `color: red;`
+
+	t.true(
+		actual.includes(expected),
+		`'${actual}' does not include the CSS string '${expected}'`
+	)
+})
+
 test('it finds JS generated <link /> CSS', async t => {
 	const path = '/js-generated-link'
 	const cssInJsExampleHtml = readFileSync(
