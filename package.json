@@ -11,10 +11,11 @@
     "extract",
     "css",
     "scrape",
-    "get-css"
+    "get-css",
+    "css"
   ],
   "scripts": {
-    "test": "xo && ava"
+    "test": "eslint ./src ./test && ava"
   },
   "files": [
     "src"
@@ -23,36 +24,18 @@
   "engines": {
     "node": ">=8.0"
   },
-  "xo": {
-    "prettier": true,
-    "rules": {
-      "ava/no-skip-test": "warn"
-    }
-  },
-  "prettier": {
-    "useTabs": true,
-    "semi": false,
-    "singleQuote": true,
-    "bracketSpacing": false,
-    "proseWrap": "always",
-    "overrides": [
-      {
-        "files": "*.json",
-        "options": {
-          "useTabs": false
-        }
-      }
-    ]
-  },
   "devDependencies": {
+    "@bartveneman/eslint-config-bv": "0.0.2",
     "ava": "^2.1.0",
     "chromium": "^2.1.0",
     "create-test-server": "^3.0.1",
-    "prettier": "^1.18.2",
-    "puppeteer-core": "^1.18.1",
-    "xo": "^0.24.0"
+    "eslint": "^6.3.0",
+    "puppeteer-core": "^1.18.1"
   },
   "dependencies": {
     "puppeteer": "^1.18.1"
+  },
+  "eslintConfig": {
+    "extends": "@bartveneman/eslint-config-bv"
   }
 }
