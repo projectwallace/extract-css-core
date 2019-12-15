@@ -7,21 +7,9 @@ function InvalidUrlError({url, statusCode, statusText}) {
 
 InvalidUrlError.prototype = Error.prototype
 
-module.exports = async (
-	url,
-	{waitUntil = 'networkidle2', customBrowser = null} = {}
-) => {
-	if (
-		customBrowser !== null &&
-		(!customBrowser.isConnected || !customBrowser.isConnected())
-	) {
-		return Promise.reject(
-			new TypeError('The `customBrowser` option is invalid')
-		)
-	}
-
+module.exports = async (url, {waitUntil = 'networkidle2'} = {}) => {
 	// Setup a browser instance
-	const browser = customBrowser || (await puppeteer.launch())
+	const browser = await puppeteer.launch()
 
 	// Create a new page and navigate to it
 	const page = await browser.newPage()
