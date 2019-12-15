@@ -1,41 +1,38 @@
 {
-  "name": "extract-css-core",
-  "description": "Extract all CSS from a given url, both server side and client side rendered.",
-  "version": "1.1.0",
-  "homepage": "https://www.projectwallace.com/oss",
-  "repository": "https://github.com/bartveneman/extract-css-core",
-  "issues": "https://github.com/bartveneman/extract-css-core/issues",
-  "license": "MIT",
-  "author": "Bart Veneman",
-  "keywords": [
-    "extract",
-    "css",
-    "scrape",
-    "get-css",
-    "css"
-  ],
-  "scripts": {
-    "test": "eslint ./src ./test && ava"
-  },
-  "files": [
-    "src"
-  ],
-  "main": "src/index.js",
-  "engines": {
-    "node": ">=8.0"
-  },
-  "devDependencies": {
-    "@bartveneman/eslint-config-bv": "0.0.2",
-    "ava": "^2.1.0",
-    "chromium": "^2.1.0",
-    "create-test-server": "^3.0.1",
-    "eslint": "^6.3.0",
-    "puppeteer-core": "^1.18.1"
-  },
-  "dependencies": {
-    "puppeteer": "^1.18.1"
-  },
-  "eslintConfig": {
-    "extends": "@bartveneman/eslint-config-bv"
-  }
+	"name": "extract-css-core",
+	"description": "Extract all CSS from a given url, both server side and client side rendered.",
+	"version": "1.1.0",
+	"homepage": "https://www.projectwallace.com/oss",
+	"repository": "https://github.com/bartveneman/extract-css-core",
+	"issues": "https://github.com/bartveneman/extract-css-core/issues",
+	"license": "MIT",
+	"author": "Bart Veneman",
+	"keywords": [
+		"extract",
+		"css",
+		"scrape",
+		"get-css"
+	],
+	"scripts": {
+		"test": "eslint ./src ./test && ava"
+	},
+	"files": [
+		"src"
+	],
+	"main": "src/index.js",
+	"engines": {
+		"node": ">=8.0"
+	},
+	"devDependencies": {
+		"@bartveneman/eslint-config-bv": "0.0.2",
+		"ava": "^2.4.0",
+		"create-test-server": "^3.0.1",
+		"eslint": "^6.7.2"
+	},
+	"dependencies": {
+		"puppeteer": "^2.0.0"
+	},
+	"eslintConfig": {
+		"extends": "@bartveneman/eslint-config-bv"
+	}
 }

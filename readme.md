@@ -19,7 +19,7 @@
 Existing packages like
 [get-css](https://github.com/cssstats/cssstats/tree/master/packages/get-css)
 look at a server-generated piece of HTML and get all the `<link>` and `<style>`
-tags from it. This works fine for 100% server rendered pages, and pages with 
+tags from it. This works fine for 100% server rendered pages, and pages with
 CSS-in-JS styling.
 
 ### Solution
@@ -68,21 +68,8 @@ Default: `networkidle2`
 Can be any value as provided by the
 [Puppeteer docs](https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#pagegotourl-options).
 
-#### customBrowser
-
-Type: `Browser`
-
-Default: `null`
-
-A
-[Puppeteer Browser](https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#class-browser)
-instance. See the `test` directory for implementation examples. This option
-exists primarily for use with
-[extract-css](https://github.com/bartveneman/extract-css)
-
 ## Related
 
-- [extract-css](https://github.com/bartveneman/extract-css) - Extract CSS
-  running as a serverless function
+- [Wallace CLI](https://github.com/bartveneman/wallace-cli) - Pretty CSS analytics in your terminal
 - [get-css](https://github.com/cssstats/cssstats/tree/master/packages/get-css) -
   The original get-css

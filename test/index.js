@@ -2,8 +2,6 @@ const test = require('ava')
 const createTestServer = require('create-test-server')
 const {readFileSync} = require('fs')
 const {resolve} = require('path')
-const chromium = require('chromium')
-const puppeteerCore = require('puppeteer-core')
 
 const extractCss = require('..')
 
@@ -136,30 +134,4 @@ test('it rejects if the url has an HTTP error status', async t => {
 
 test('it rejects on an invalid url', async t => {
 	await t.throwsAsync(extractCss('site.example'))
-})
-
-test('it accepts a browser override for usage with other browsers', async t => {
-	const path = '/browser-override'
-	server.get(path, (req, res) => {
-		res.send(`
-		<!doctype html>
-		<style>
-			body::before { content: "${req.headers['user-agent']}"; }
-		</style>
-	`)
-	})
-	const customBrowser = await puppeteerCore.launch({
-		executablePath: chromium.path,
-		args: ['--user-agent=Extract CSS Core']
-	})
-	const actual = await extractCss(server.url + path, {customBrowser})
-
-	t.is(actual, 'body::before { content: "Extract CSS Core"; }')
-})
-
-test('it rejects on an invalid customBrowser option', async t => {
-	const path = '/browser-override'
-	await t.throwsAsync(extractCss(server.url + path, {customBrowser: {}}), {
-		message: 'The `customBrowser` option is invalid'
-	})
 })
