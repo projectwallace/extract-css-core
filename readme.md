@@ -19,8 +19,8 @@
 Existing packages like
 [get-css](https://github.com/cssstats/cssstats/tree/master/packages/get-css)
 look at a server-generated piece of HTML and get all the `<link>` and `<style>`
-tags from it. This works fine for 100% server rendered pages, and pages with
-CSS-in-JS styling.
+tags from it. This works fine for 100% server rendered pages 👍, but not for pages with
+CSS-in-JS styling 👎.
 
 ### Solution
 
