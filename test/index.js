@@ -98,10 +98,7 @@ test('it finds css-in-js, like Styled Components', async t => {
 	})
 
 	const actual = await extractCss(server.url + url, {waitUntil: 'load'})
-	// Color is RGB instead of Hex, because of serialization:
-	// https://www.w3.org/TR/cssom-1/#serializing-css-values
-	const expected =
-		'html { color: rgb(255, 0, 0); }.hJHBhT { color: blue; font-family: sans-serif; font-size: 3em; }'
+	const expected = 'body { color: red; }.bcMPWx { color: blue; }'
 
 	t.is(actual, expected)
 })
