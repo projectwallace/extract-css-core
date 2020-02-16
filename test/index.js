@@ -83,7 +83,27 @@ test('it does not report the same CSS twice', async t => {
 	t.true(actual.includes('.fixture { color: red; }'))
 	t.true(actual.includes('.style-tag-fixture-js { color: yellow; }'))
 	t.true(actual.includes('.style-tag-fixture-html { color: green; }'))
+	t.true(actual.includes('border-style: solid'))
+	t.true(actual.includes('background-color: red'))
 
+	t.snapshot(actual)
+})
+
+test('it finds inline styles - HTML', async t => {
+	server.get('/inline-style-html.html', serveStatic)
+	const actual = await extractCss(server.url + '/inline-style-html.html')
+
+	t.true(actual.includes('[x-inline-style-dfc776] { color: red; font-size: 12px; }'))
+	t.true(actual.includes('[x-inline-style-ea2739] { color: blue }'))
+	t.snapshot(actual)
+})
+
+test('it finds inline styles - JS', async t => {
+	server.get('/inline-style-js.html', serveStatic)
+	const actual = await extractCss(server.url + '/inline-style-js.html')
+
+	t.true(actual.includes('[x-inline-style-874435] { color: red; font-size: 12px; border-style: solid; }'))
+	t.true(actual.includes('[x-inline-style-ea1c8f] { border-color: blue; border-width: 1px; }'))
 	t.snapshot(actual)
 })
 
