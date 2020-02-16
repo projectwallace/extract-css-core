@@ -1,3 +1,5 @@
+/* global document */
+
 const puppeteer = require('puppeteer')
 const crypto = require('crypto')
 
@@ -49,7 +51,6 @@ module.exports = async (url, {waitUntil = 'networkidle0'} = {}) => {
 	// This is primarily for CSS-in-JS solutions
 	// See: https://developer.mozilla.org/en-US/docs/Web/API/CSSRule/cssText
 	const styleSheetsApiCss = await page.evaluate(() => {
-		/* global document */
 		return [...document.styleSheets]
 			.filter(stylesheet => stylesheet.href === null)
 			.map(stylesheet =>
@@ -76,7 +77,6 @@ module.exports = async (url, {waitUntil = 'networkidle0'} = {}) => {
 	// The 6-digit hash is based on the actual CSS, so it's not
 	// necessarily unique!
 	const inlineCssRules = await page.evaluate(() => {
-		/* global document */
 		return [...document.querySelectorAll('[style]')]
 			.map(element => element.getAttribute('style'))
 			.filter(Boolean)
