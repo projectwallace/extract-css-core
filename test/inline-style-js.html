@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+</head>
+<body>
+	<h1>Inline styles with JS</h1>
+
+	<script>
+		var element = document.querySelector('h1')
+
+		// Set multiple styles in a single statement
+		element.style.cssText = 'color: red; font-size: 12px;';
+
+		// Or ... this overrides ignore the previous line
+		// element.setAttribute('style', 'border-color: blue; border-width: 1px;');
+
+		// Set a single style property
+		element.style.borderStyle = 'solid';
+	</script>
+</body>
+</html>
