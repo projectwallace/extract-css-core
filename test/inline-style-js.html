@@ -7,18 +7,20 @@
 </head>
 <body>
 	<h1>Inline styles with JS</h1>
+	<h2>Another inliner</h2>
 
 	<script>
-		var element = document.querySelector('h1')
+		var h1 = document.querySelector('h1')
 
 		// Set multiple styles in a single statement
-		element.style.cssText = 'color: red; font-size: 12px;';
-
-		// Or ... this overrides ignore the previous line
-		// element.setAttribute('style', 'border-color: blue; border-width: 1px;');
+		h1.style.cssText = 'color: red; font-size: 12px;';
 
 		// Set a single style property
-		element.style.borderStyle = 'solid';
+		h1.style.borderStyle = 'solid';
+
+		// Alternatove way of .style.cssText
+		var h2 = document.querySelector('h2');
+		h2.setAttribute('style', 'border-color: blue; border-width: 1px;');
 	</script>
 </body>
 </html>

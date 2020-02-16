@@ -15,6 +15,9 @@
 </head>
 <body>
 
+	<div style="background-color: red;"></div>
+	<div id="inline"></div>
+
 	<!-- <link> tag in JS -->
 	<script>
 		var style = document.createElement('link')
@@ -28,6 +31,12 @@
 		var style = document.createElement('style')
 		style.textContent = '.style-tag-fixture-js { color: yellow; }'
 		document.body.appendChild(style)
+	</script>
+
+	<!-- inline styles via JS -->
+	<script>
+		var element = document.querySelector('#inline')
+		element.style.borderStyle = 'solid';
 	</script>
 </body>
 </html>

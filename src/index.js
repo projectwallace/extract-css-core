@@ -1,4 +1,11 @@
+/* global document */
+
 const puppeteer = require('puppeteer')
+const crypto = require('crypto')
+
+function hashString(str) {
+	return crypto.createHash('md5').update(str, 'utf8').digest('hex')
+}
 
 function InvalidUrlError({url, statusCode, statusText}) {
 	this.name = 'InvalidUrlError'
@@ -44,7 +51,6 @@ module.exports = async (url, {waitUntil = 'networkidle0'} = {}) => {
 	// This is primarily for CSS-in-JS solutions
 	// See: https://developer.mozilla.org/en-US/docs/Web/API/CSSRule/cssText
 	const styleSheetsApiCss = await page.evaluate(() => {
-		/* global document */
 		return [...document.styleSheets]
 			.filter(stylesheet => stylesheet.href === null)
 			.map(stylesheet =>
@@ -54,6 +60,33 @@ module.exports = async (url, {waitUntil = 'networkidle0'} = {}) => {
 			)
 			.join('\n')
 	})
+
+	// Get all inline styles: <element style="">
+	// This creates a new CSSRule for every inline style
+	// attribute it encounters.
+	//
+	// Example:
+	//
+	// HTML:
+	//    <h1 style="color: red;">Text</h1>
+	//
+	// CSSRule:
+	//    [x-inline-style-237a7d] { color: red; }
+	//                    ^^^^^^
+	//
+	// The 6-digit hash is based on the actual CSS, so it's not
+	// necessarily unique!
+	const inlineCssRules = await page.evaluate(() => {
+		return [...document.querySelectorAll('[style]')]
+			.map(element => element.getAttribute('style'))
+			.filter(Boolean)
+	})
+	const inlineCss = inlineCssRules
+		.map(rule => {
+			const hash = hashString(rule).slice(-6)
+			return `[x-inline-style-${hash}] { ${rule} }`
+		})
+		.join('\n')
 
 	await browser.close()
 
@@ -68,7 +101,7 @@ module.exports = async (url, {waitUntil = 'networkidle0'} = {}) => {
 		.map(({text}) => text)
 		.join('\n')
 
-	const css = [styleSheetsApiCss, coverageCss]
+	const css = [styleSheetsApiCss, coverageCss, inlineCss]
 		.filter(Boolean)
 		.join('\n')
 
