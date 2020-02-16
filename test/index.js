@@ -1,6 +1,6 @@
 const test = require('ava')
 const createTestServer = require('create-test-server')
-const {readFileSync, existsSync} = require('fs')
+const {readFileSync} = require('fs')
 const {resolve} = require('path')
 
 const extractCss = require('..')
@@ -8,23 +8,15 @@ const extractCss = require('..')
 let server
 const fixture = readFileSync(resolve(__dirname, 'fixture.css'), 'utf8')
 
+function staticFile(req, res) {
+	const fileContents = readFileSync(resolve(__dirname, req.path.slice(1)), 'utf8')
+	res.send(fileContents)
+}
+
 test.before(async () => {
 	server = await createTestServer()
-	server.get('/fixture.css', (req, res) => {
-		res.send(fixture)
-	})
-	function staticFile(req, res) {
-		const fileContents = readFileSync(resolve(__dirname, req.path.slice(1)), 'utf8')
-		res.send(fileContents)
-	}
 
-	server.get('/css-in-js.html', staticFile)
-	server.get('/inline-style-html.html', staticFile)
-	server.get('/inline-style-js.html', staticFile)
-	server.get('/link-tag-html.html', staticFile)
-	server.get('/link-tag-js.html', staticFile)
-	server.get('/style-tag-html.html', staticFile)
-	server.get('/style-tag-js.html', staticFile)
+	server.get('/fixture.css', staticFile)
 })
 
 test.after(async () => {
@@ -32,30 +24,35 @@ test.after(async () => {
 })
 
 test('it finds css in a <link> tag - HTML', async t => {
+	server.get('/link-tag-html.html', staticFile)
 	const actual = await extractCss(server.url + '/link-tag-html.html')
 	const expected = fixture
 	t.is(actual, expected)
 })
 
 test('it finds css in a <link> tag - JS', async t => {
+	server.get('/link-tag-js.html', staticFile)
 	const actual = await extractCss(server.url + '/link-tag-js.html')
 	const expected = fixture
 	t.is(actual, expected)
 })
 
 test('it finds css in a <style> tag - HTML', async t => {
+	server.get('/style-tag-html.html', staticFile)
 	const actual = await extractCss(server.url + '/style-tag-html.html')
 	const expected = '.fixture { color: red; }'
 	t.is(actual, expected)
 })
 
 test('it finds css in a <style> tag - JS', async t => {
+	server.get('/style-tag-js.html', staticFile)
 	const actual = await extractCss(server.url + '/style-tag-js.html')
 	const expected = '.fixture { color: red; }'
 	t.is(actual, expected)
 })
 
 test('it finds css-in-js', async t => {
+	server.get('/css-in-js.html', staticFile)
 	const actual = await extractCss(server.url + '/css-in-js.html')
 	const expected = '.bcMPWx { color: blue; }'
 	t.is(actual, expected)
