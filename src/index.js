@@ -7,7 +7,11 @@ function InvalidUrlError({url, statusCode, statusText}) {
 
 InvalidUrlError.prototype = Error.prototype
 
-module.exports = async (url, {waitUntil = 'networkidle2'} = {}) => {
+/**
+ * @param {string} url URL to get CSS from
+ * @param {string} waitUntil https://github.com/puppeteer/puppeteer/blob/master/docs/api.md#pagegotourl-options
+ */
+module.exports = async (url, {waitUntil = 'networkidle0'} = {}) => {
 	// Setup a browser instance
 	const browser = await puppeteer.launch()
 
@@ -37,6 +41,7 @@ module.exports = async (url, {waitUntil = 'networkidle2'} = {}) => {
 	const coverage = await page.coverage.stopCSSCoverage()
 
 	// Get all CSS generated with the CSSStyleSheet API
+	// This is primarily for CSS-in-JS solutions
 	// See: https://developer.mozilla.org/en-US/docs/Web/API/CSSRule/cssText
 	const styleSheetsApiCss = await page.evaluate(() => {
 		/* global document */
@@ -45,9 +50,9 @@ module.exports = async (url, {waitUntil = 'networkidle2'} = {}) => {
 			.map(stylesheet =>
 				[...stylesheet.cssRules]
 					.map(cssStyleRule => cssStyleRule.cssText)
-					.join('')
+					.join('\n')
 			)
-			.join('')
+			.join('\n')
 	})
 
 	await browser.close()
@@ -61,7 +66,11 @@ module.exports = async (url, {waitUntil = 'networkidle2'} = {}) => {
 		.filter(styles => styles.url !== url)
 		// The `text` property contains the actual CSS
 		.map(({text}) => text)
-		.join('')
+		.join('\n')
 
-	return Promise.resolve(styleSheetsApiCss + coverageCss)
+	const css = [styleSheetsApiCss, coverageCss]
+		.filter(Boolean)
+		.join('\n')
+
+	return Promise.resolve(css)
 }
