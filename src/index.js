@@ -20,7 +20,7 @@ InvalidUrlError.prototype = Error.prototype
  */
 module.exports = async (url, {waitUntil = 'networkidle0'} = {}) => {
 	// Setup a browser instance
-	const browser = await puppeteer.launch({headless: false, devtools: true})
+	const browser = await puppeteer.launch()
 
 	// Create a new page and navigate to it
 	const page = await browser.newPage()
