@@ -23,25 +23,24 @@ test.after(async () => {
 	await server.close()
 })
 
-test('it finds css in a <link> tag - HTML', async t => {
-	// @TODO: during tests, it doesn't find the imported CSS file contents
-	// but it does work outside of test scope
+test.only('it finds css in a <link> tag - HTML', async t => {
 	server.get('/link-tag-html.html', serveStatic)
 	const actual = await extractCss(server.url + '/link-tag-html.html')
 
+	t.log('actual', actual)
 	t.true(actual.includes('@import url("imported.css");'))
+	t.true(actual.includes('.imported { color: blue; }'))
 	t.true(actual.includes('.fixture { color: red; }'))
 	t.snapshot(actual)
 })
 
 test('it finds css in a <link> tag - JS', async t => {
-	// @TODO: during tests, it doesn't find the imported CSS file contents
-	// but it does work outside of test scope
 	server.get('/link-tag-js.html', serveStatic)
 	const actual = await extractCss(server.url + '/link-tag-js.html')
 
 	t.true(actual.includes('@import url("imported.css");'))
 	t.true(actual.includes('.fixture { color: red; }'))
+	t.true(actual.includes('.imported { color: blue; }'))
 	t.snapshot(actual)
 })
 
