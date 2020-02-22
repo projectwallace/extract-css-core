@@ -23,7 +23,7 @@ test.after(async () => {
 	await server.close()
 })
 
-test.only('it finds css in a <link> tag - HTML', async t => {
+test('it finds css in a <link> tag - HTML', async t => {
 	server.get('/link-tag-html.html', serveStatic)
 	const actual = await extractCss(server.url + '/link-tag-html.html')
 
