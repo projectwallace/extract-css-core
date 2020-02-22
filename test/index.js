@@ -27,7 +27,6 @@ test.only('it finds css in a <link> tag - HTML', async t => {
 	server.get('/link-tag-html.html', serveStatic)
 	const actual = await extractCss(server.url + '/link-tag-html.html')
 
-	t.log('actual', actual)
 	t.true(actual.includes('@import url("imported.css");'))
 	t.true(actual.includes('.imported { color: blue; }'))
 	t.true(actual.includes('.fixture { color: red; }'))
