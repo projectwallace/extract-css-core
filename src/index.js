@@ -36,6 +36,14 @@ module.exports = async (url, {waitUntil = 'networkidle0'} = {}) => {
 		)
 	}
 
+	// If the response is a CSS file, return that file
+	// instead of running our complicated setup
+	const headers = response.headers()
+
+	if (headers['content-type'].includes('text/css')) {
+		return Promise.resolve(response.text())
+	}
+
 	const coverage = await page.coverage.stopCSSCoverage()
 
 	// Get all CSS generated with the CSSStyleSheet API
