@@ -1,11 +1,5 @@
 /* global document */
-
 const puppeteer = require('puppeteer')
-const crypto = require('crypto')
-
-function hashString(str) {
-	return crypto.createHash('md5').update(str, 'utf8').digest('hex')
-}
 
 function InvalidUrlError({url, statusCode, statusText}) {
 	this.name = 'InvalidUrlError'
@@ -17,6 +11,7 @@ InvalidUrlError.prototype = Error.prototype
 /**
  * @param {string} url URL to get CSS from
  * @param {string} waitUntil https://github.com/puppeteer/puppeteer/blob/master/docs/api.md#pagegotourl-options
+ * @returns {string} All CSS that was found
  */
 module.exports = async (url, {waitUntil = 'networkidle0'} = {}) => {
 	// Setup a browser instance
@@ -24,6 +19,7 @@ module.exports = async (url, {waitUntil = 'networkidle0'} = {}) => {
 
 	// Create a new page and navigate to it
 	const page = await browser.newPage()
+	await page.coverage.startCSSCoverage()
 	const response = await page.goto(url, {waitUntil})
 
 	// Make sure that we only try to extract CSS from valid pages.
@@ -40,77 +36,53 @@ module.exports = async (url, {waitUntil = 'networkidle0'} = {}) => {
 		)
 	}
 
-	// Get all CSS generated with the CSSStyleSheet API
-	// See: https://developer.mozilla.org/en-US/docs/Web/API/CSSRule/cssText
+	const coverage = await page.coverage.stopCSSCoverage()
+
 	const styleSheetsApiCss = await page.evaluate(() => {
-		function getCssFromStyleSheet(styleSheet) {
-			return [...styleSheet.cssRules]
-				.map(cssRule => {
-					// Recursively get all stylesheet's cssText in case
-					// of an @import rule
-					//
-					// Using constructor.name here instead of cssRule.type
-					// because the spec recommends it:
-					// https://drafts.csswg.org/cssom/#dom-cssrule-type
-					if (cssRule.constructor.name === 'CSSImportRule') {
-						console.log('cssImportRule')
-						return [
-							cssRule.cssText,
-							getCssFromStyleSheet(cssRule.styleSheet)
-						].join('\n')
-					}
-
-					// If not an @import, use the plain cssText
-					return cssRule.cssText
-				}).join('\n')
-		}
-
 		return [...document.styleSheets]
-			.map(stylesheet => getCssFromStyleSheet(stylesheet))
-			.join('\n')
+			// Only take the stylesheets without href (BUT WHY)
+			.filter(stylesheet => stylesheet.href === null)
+			.map(stylesheet => {
+				return {
+					type: stylesheet.ownerNode.tagName.toLowerCase(),
+					href: stylesheet.href || document.location.href,
+					css: [...stylesheet.cssRules].map(({cssText}) => cssText).join('\n')
+				}
+			})
 	})
 
-	// Get all inline styles: <html style="">
-	// This creates a new CSSRule for every inline style
-	// attribute it encounters.
-	//
-	// Example:
-	//
-	// HTML:
-	//    <h1 style="color: red; font-size: 10px;">Text</h1>
-	//
-	// CSSRule:
-	//    [x-inline-style-237a7d] {
-	//                    ^^^^^^
-	//      color: red;
-	//      font-size: 10px;
-	//    }
-	//
-	// WARNING! The 6-digit hash is based on the actual CSS,
-	//          so it's not necessarily unique!
 	const inlineCssRules = await page.evaluate(() => {
 		return [...document.querySelectorAll('[style]')]
 			.map(element => element.getAttribute('style'))
+			// Filter out empty style="" attributes
+			.filter(Boolean)
 	})
-
 	const inlineCss = inlineCssRules
-		// Filter out any empty style attributes
-		.filter(Boolean)
-		// Make a complete CSSRule for every CSS Rule 'Body' that
-		// was found via inline styles, and give it a
-		// selector based on the has of it's contents.
-		.map(rule => {
-			const hash = hashString(rule).slice(-6)
-			return `[x-inline-style-${hash}] { ${rule} }`
-		})
-		.join('\n')
+		.map(rule => `[x-extract-css-inline-style] { ${rule} }`)
+		.map(css => ({type: 'inline', href: url, css}))
+
+	const links = coverage
+		// Filter out the <style> tags that were found in the coverage
+		// report since we've conducted our own search for them.
+		// A coverage CSS item with the same url as the url of the page
+		// we requested is an indication that this was a <style> tag
+		.filter(entry => entry.url !== url)
+		.map(entry => ({
+			href: entry.url,
+			css: entry.text
+		}))
+		.map(entry => ({
+			...entry,
+			type: 'link-or-import',
+			href: entry.href
+		}))
 
 	await browser.close()
 
-	const css = [
-		styleSheetsApiCss,
-		inlineCss
-	]
+	const css = links
+		.concat(styleSheetsApiCss)
+		.concat(inlineCss)
+		.map(({css}) => css)
 		.join('\n')
 
 	return Promise.resolve(css)

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+
+	<!-- <link> in HTML -->
+	<link rel="stylesheet" href="/link-in-html.css">
+
+	<!-- <style> in HTML -->
+	<style>
+		.style-tag-in-html { color: green; }
+	</style>
+
+	<style id="js-insertRule"></style>
+</head>
+<body>
+
+	<div style="background-image: url('background-image-inline-style-attribute-in-html');"></div>
+	<div id="inline-csstext"></div>
+	<div id="inline-prop"></div>
+
+	<!-- <link> tag in JS -->
+	<script>
+		var style = document.createElement('link')
+		style.href = 'link-tag-js.css'
+		style.rel = 'stylesheet'
+		document.head.appendChild(style)
+	</script>
+
+	<!-- <style> tag in JS -->
+	<script>
+		var style = document.createElement('style')
+		style.textContent = '.style-tag-js { }'
+		document.body.appendChild(style)
+	</script>
+
+	<!-- inline styles via JS -->
+	<script>
+		var element = document.querySelector('#inline-prop')
+		element.style.backgroundImage = 'url(background-image-inline-style-js-with-prop)';
+	</script>
+	<script>
+		var element = document.querySelector('#inline-csstext')
+		element.style.cssText = 'background-image: url(background-image-inline-style-js-cssText)';
+	</script>
+
+	<!-- Add styles via CSSStyleSheet.insertRule() -->
+	<script>
+		var sheet = document.querySelector('#js-insertRule').sheet
+		sheet.insertRule('.js-insertRule { color: red; }')
+	</script>
+</body>
+</html>
