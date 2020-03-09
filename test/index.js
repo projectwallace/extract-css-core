@@ -84,7 +84,7 @@ test('it finds inline styles - JS', async t => {
 	t.snapshot(actual)
 })
 
-test.only('it returns a direct link to a CSS file', async t => {
+test('it returns a direct link to a CSS file', async t => {
 	const actual = await extractCss(server.url + '/import-in-css.css')
 
 	t.true(actual.includes('.css-imported-with-css {}'))
