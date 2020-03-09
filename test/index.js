@@ -1,22 +1,14 @@
 const test = require('ava')
 const createTestServer = require('create-test-server')
-const {readFileSync} = require('fs')
-const {resolve} = require('path')
+const sirv = require('sirv')
 
 const extractCss = require('..')
 
 let server
 
-function serveStatic(req, res) {
-	const fileContents = readFileSync(resolve(__dirname, req.path.slice(1)), 'utf8')
-	res.send(fileContents)
-}
-
 test.before(async () => {
 	server = await createTestServer()
-
-	server.get('/fixture.css', serveStatic)
-	server.get('/imported.css', serveStatic)
+	server.use(sirv('test/fixtures'))
 })
 
 test.after(async () => {
@@ -24,86 +16,71 @@ test.after(async () => {
 })
 
 test('it finds css in a <link> tag - HTML', async t => {
-	// @TODO: during tests, it doesn't find the imported CSS file contents
-	// but it does work outside of test scope
-	server.get('/link-tag-html.html', serveStatic)
 	const actual = await extractCss(server.url + '/link-tag-html.html')
 
-	t.true(actual.includes('@import url("imported.css");'))
-	t.true(actual.includes('.fixture { color: red; }'))
+	t.true(actual.includes('.link-in-html { }'))
+	t.true(actual.includes('@import url("import-in-css.css")'))
+	t.true(actual.includes('.css-imported-with-css {}'))
 	t.snapshot(actual)
 })
 
 test('it finds css in a <link> tag - JS', async t => {
-	// @TODO: during tests, it doesn't find the imported CSS file contents
-	// but it does work outside of test scope
-	server.get('/link-tag-js.html', serveStatic)
 	const actual = await extractCss(server.url + '/link-tag-js.html')
 
-	t.true(actual.includes('@import url("imported.css");'))
-	t.true(actual.includes('.fixture { color: red; }'))
+	t.true(actual.includes('.link-tag-created-with-js {}'))
+	t.true(actual.includes('@import url("import-in-css.css")'))
+	t.true(actual.includes('.css-imported-with-css {}'))
 	t.snapshot(actual)
 })
 
 test('it finds css in a <style> tag - HTML', async t => {
-	server.get('/style-tag-html.html', serveStatic)
 	const actual = await extractCss(server.url + '/style-tag-html.html')
 
-	t.true(actual.includes('@import url("imported.css");'))
 	t.true(actual.includes('.fixture { color: red; }'))
-	t.true(actual.includes('.imported { color: blue; }'))
+	t.true(actual.includes('@import url("import-in-css.css")'))
+	t.true(actual.includes('.css-imported-with-css {}'))
 	t.snapshot(actual)
 })
 
 test('it finds css in a <style> tag - JS', async t => {
-	server.get('/style-tag-js.html', serveStatic)
 	const actual = await extractCss(server.url + '/style-tag-js.html')
 
-	t.true(actual.includes('@import url("imported.css");'))
 	t.true(actual.includes('.fixture { color: red; }'))
-	t.true(actual.includes('.imported { color: blue; }'))
+	t.true(actual.includes('@import url("import-in-js.css")'))
+	t.true(actual.includes('.css-imported-with-js {}'))
 	t.snapshot(actual)
 })
 
 test('it finds css-in-js', async t => {
-	server.get('/css-in-js.html', serveStatic)
 	const actual = await extractCss(server.url + '/css-in-js.html')
 	const expected = '.bcMPWx { color: blue; }'
 
 	t.is(actual, expected)
+	t.snapshot(actual)
 })
 
-test('it does not report the same CSS twice', async t => {
-	// @TODO: during tests, it doesn't find the imported CSS file contents
-	// but it does work outside of test scope
-	server.get('/kitchen-sink.html', serveStatic)
+test('it finds CSS implemented in a mixed methods (inline, links, style tags)', async t => {
 	const actual = await extractCss(server.url + '/kitchen-sink.html')
 
-	t.true(actual.includes('@import url("imported.css");'))
-	t.true(actual.includes('.fixture { color: red; }'))
-	t.true(actual.includes('.style-tag-fixture-js { color: yellow; }'))
-	t.true(actual.includes('.style-tag-fixture-html { color: green; }'))
-	t.true(actual.includes('border-style: solid'))
-	t.true(actual.includes('background-color: red'))
-
+	t.true(actual.includes('@import url("import-in-css.css")'))
+	t.true(actual.includes('.css-imported-with-css {}'))
+	t.true(actual.includes('[x-extract-css-inline-style]'))
 	t.snapshot(actual)
 })
 
 test('it finds inline styles - HTML', async t => {
-	server.get('/inline-style-html.html', serveStatic)
 	const actual = await extractCss(server.url + '/inline-style-html.html')
 
-	t.true(actual.includes('[x-inline-style-dfc776] { color: red; font-size: 12px; }'))
-	t.true(actual.includes('[x-inline-style-ea2739] { color: blue }'))
+	t.true(actual.includes('[x-extract-css-inline-style] { color: red; font-size: 12px; }'))
+	t.true(actual.includes('[x-extract-css-inline-style] { color: blue }'))
 	t.snapshot(actual)
 })
 
 test('it finds inline styles - JS', async t => {
-	server.get('/inline-style-js.html', serveStatic)
 	const actual = await extractCss(server.url + '/inline-style-js.html')
 
-	t.true(actual.includes('[x-inline-style-874435] { color: red; font-size: 12px; border-style: solid; }'))
-	t.true(actual.includes('[x-inline-style-ea1c8f] { border-color: blue; border-width: 1px; }'))
+	t.true(actual.includes('[x-extract-css-inline-style] { color: red; font-size: 12px; border-style: solid; }'))
+	t.true(actual.includes('[x-extract-css-inline-style] { border-color: blue; border-width: 1px; }'))
 	t.snapshot(actual)
 })
 

@@ -57,7 +57,7 @@ String.
 
 Type: `Object`
 
-Default: `null`
+Default: `{}`
 
 #### waitUntil
 
