@@ -38,6 +38,9 @@ module.exports = async (url, {waitUntil = 'networkidle0'} = {}) => {
 
 	const coverage = await page.coverage.stopCSSCoverage()
 
+	// Get all CSS generated with the CSSStyleSheet API
+	// This is primarily for CSS-in-JS solutions
+	// See: https://developer.mozilla.org/en-US/docs/Web/API/CSSRule/cssText
 	const styleSheetsApiCss = await page.evaluate(() => {
 		return [...document.styleSheets]
 			// Only take the stylesheets without href (BUT WHY)
@@ -51,6 +54,18 @@ module.exports = async (url, {waitUntil = 'networkidle0'} = {}) => {
 			})
 	})
 
+	// Get all inline styles: <element style="">
+	// This creates a new CSSRule for every inline style
+	// attribute it encounters.
+	//
+	// Example:
+	//
+	// HTML:
+	//    <h1 style="color: red;">Text</h1>
+	//
+	// CSSRule:
+	//    [x-extract-css-inline-style] { color: red; }
+	//
 	const inlineCssRules = await page.evaluate(() => {
 		return [...document.querySelectorAll('[style]')]
 			.map(element => element.getAttribute('style'))
@@ -69,12 +84,8 @@ module.exports = async (url, {waitUntil = 'networkidle0'} = {}) => {
 		.filter(entry => entry.url !== url)
 		.map(entry => ({
 			href: entry.url,
-			css: entry.text
-		}))
-		.map(entry => ({
-			...entry,
-			type: 'link-or-import',
-			href: entry.href
+			css: entry.text,
+			type: 'link-or-import'
 		}))
 
 	await browser.close()
