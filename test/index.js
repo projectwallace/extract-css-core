@@ -84,6 +84,13 @@ test('it finds inline styles - JS', async t => {
 	t.snapshot(actual)
 })
 
+test('it returns a direct link to a CSS file', async t => {
+	const actual = await extractCss(server.url + '/import-in-css.css')
+
+	t.true(actual.includes('.css-imported-with-css {}'))
+	t.snapshot(actual)
+})
+
 test('it rejects if the url has an HTTP error status', async t => {
 	server.get('/404-page', (req, res) => {
 		res.status(404).send()
