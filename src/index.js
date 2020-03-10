@@ -41,7 +41,8 @@ module.exports = async (url, {waitUntil = 'networkidle0'} = {}) => {
 	const headers = response.headers()
 
 	if (headers['content-type'].includes('text/css')) {
-		return Promise.resolve(response.text())
+		const css = await response.text()
+		return Promise.resolve(css)
 	}
 
 	const coverage = await page.coverage.stopCSSCoverage()
