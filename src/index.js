@@ -52,7 +52,8 @@ module.exports = async (url, {waitUntil = 'networkidle0'} = {}) => {
 	// See: https://developer.mozilla.org/en-US/docs/Web/API/CSSRule/cssText
 	const styleSheetsApiCss = await page.evaluate(() => {
 		return [...document.styleSheets]
-			// Only take the stylesheets without href (BUT WHY)
+			// Only take the stylesheets without href, because those with href are
+			// <link> tags, and we already tackled those with the Coverage API
 			.filter(stylesheet => stylesheet.href === null)
 			.map(stylesheet => {
 				return {
