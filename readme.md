@@ -17,7 +17,35 @@
 ```js
 const extractCss = require('extract-css-core')
 
-const css = await extractCss('http://www.projectwallace.com')
+const css = await extractCss('https://www.projectwallace.com')
+//=> html{font-size:100%} etc.
+```
+
+Or, if you want more details:
+
+```js
+const entries = await extractCss('https://www.projectwallace.com', {
+	origins: 'include'
+})
+
+// entries will look something like this
+[
+	{
+		href: 'https://www.projectwallace.com',
+		type: 'link-or-import',
+		css: '@font-face{font-display:swap;font-family:Teko;...'
+	},
+	{
+		href: 'https://www.projectwallace.com/client/Seo.0f4fe72f.css',
+		type: 'style',
+		css: '.hero__text.svelte-qhblau a{color:var(--teal-400)}...'
+	},
+	{
+		href: 'https://www.projectwallace.com',
+		type: 'inline',
+		css: '[x-extract-css-inline-style] { position: absolute; }'
+	}
+]
 ```
 
 ## Installation
