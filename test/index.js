@@ -84,6 +84,26 @@ test('it finds inline styles - JS', async t => {
 	t.snapshot(actual)
 })
 
+test('it yields an array of entries when the `origins` option equals `include`', async t => {
+	const actual = await extractCss(server.url + '/kitchen-sink.html', {
+		origins: 'include'
+	})
+
+	t.true(Array.isArray(actual), 'Result should be an array when { origins: `include` }')
+	t.is(actual.length, 10)
+
+	function isString(item) {
+		return typeof item === 'string'
+	}
+
+	t.true(actual.every(item => isString(item.type) && ['link-or-import', 'style', 'inline'].includes(item.type)))
+	t.true(actual.every(item => isString(item.href)))
+	t.true(actual.every(item => item.href.startsWith('http://localhost:') && /\.(html|css)$/.test(item.href)))
+	t.true(actual.every(item => isString(item.css)))
+
+	// Cannot snapshot due to changing port numbers in `create-test-server`
+})
+
 test('it returns a direct link to a CSS file', async t => {
 	const actual = await extractCss(server.url + '/import-in-css.css')
 

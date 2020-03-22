@@ -51,13 +51,21 @@ is the power behind finding most of the CSS. Additionally, the
 ### extractCss(url, [options])
 
 Extract CSS from a page. Returns a Promise that contains the CSS as a single
-String.
+String, or an Array of all entries found when the option `origins: 'include'` is passed.
 
 ### Options
 
 Type: `Object`
 
 Default: `{}`
+
+#### origins
+
+Type: `String`
+
+Default: `exclude`
+
+Possible values: `exclude`, `include`
 
 #### waitUntil
 
@@ -70,6 +78,6 @@ Can be any value as provided by the
 
 ## Related
 
+- [projectwallace.com/get-css](https://www.projectwallace.com/get-css) - Online version of this package
 - [Wallace CLI](https://github.com/bartveneman/wallace-cli) - Pretty CSS analytics in your terminal
-- [get-css](https://github.com/cssstats/cssstats/tree/master/packages/get-css) -
-  The original get-css from CSSStats
+- [get-css](https://github.com/cssstats/cssstats/tree/master/packages/get-css) - The original get-css from CSSStats

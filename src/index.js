@@ -13,7 +13,7 @@ InvalidUrlError.prototype = Error.prototype
  * @param {string} waitUntil https://github.com/puppeteer/puppeteer/blob/master/docs/api.md#pagegotourl-options
  * @returns {string} All CSS that was found
  */
-module.exports = async (url, {waitUntil = 'networkidle0'} = {}) => {
+module.exports = async (url, {waitUntil = 'networkidle0', origins = 'exclude'} = {}) => {
 	// Setup a browser instance
 	const browser = await puppeteer.launch()
 
@@ -103,8 +103,16 @@ module.exports = async (url, {waitUntil = 'networkidle0'} = {}) => {
 	const css = links
 		.concat(styleSheetsApiCss)
 		.concat(inlineCss)
-		.map(({css}) => css)
-		.join('\n')
 
-	return Promise.resolve(css)
+	// Return the complete structure ...
+	if (origins === 'include') {
+		return Promise.resolve(css)
+	}
+
+	// ... or return all CSS as a single String
+	return Promise.resolve(
+		css
+			.map(({css}) => css)
+			.join('\n')
+	)
 }
