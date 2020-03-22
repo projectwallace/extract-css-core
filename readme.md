@@ -5,7 +5,7 @@
 
 [![NPM Version](https://img.shields.io/npm/v/extract-css-core.svg)](https://www.npmjs.com/package/extract-css-core)
 [![Weekly downloads](https://img.shields.io/npm/dw/extract-css-core.svg)](https://www.npmjs.com/package/extract-css-core)
-[![Build Status](https://travis-ci.org/bartveneman/extract-css-core.svg?branch=master)](https://travis-ci.org/bartveneman/extract-css-core)
+![Node.js CI](https://github.com/bartveneman/extract-css-core/workflows/Node.js%20CI/badge.svg)
 [![Known Vulnerabilities](https://snyk.io/test/github/bartveneman/extract-css-core/badge.svg)](https://snyk.io/test/github/bartveneman/extract-css-core)
 ![Dependencies Status](https://img.shields.io/david/bartveneman/extract-css-core.svg)
 ![Dependencies Status](https://img.shields.io/david/dev/bartveneman/extract-css-core.svg)
