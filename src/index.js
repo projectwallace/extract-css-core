@@ -1,5 +1,6 @@
 /* global document */
 const puppeteer = require('puppeteer')
+const normalizeUrl = require('normalize-url')
 
 function InvalidUrlError({url, statusCode, statusText}) {
 	this.name = 'InvalidUrlError'
@@ -20,6 +21,7 @@ module.exports = async (url, {waitUntil = 'networkidle0', origins = 'exclude'} =
 	// Create a new page and navigate to it
 	const page = await browser.newPage()
 	await page.coverage.startCSSCoverage()
+	url = normalizeUrl(url, {stripWWW: false})
 	const response = await page.goto(url, {waitUntil})
 
 	// Make sure that we only try to extract CSS from valid pages.
