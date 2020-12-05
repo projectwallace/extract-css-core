@@ -21,7 +21,6 @@ test('it finds css in a <link> tag - HTML', async t => {
 	t.true(actual.includes('.link-in-html { }'))
 	t.true(actual.includes('@import url("import-in-css.css")'))
 	t.true(actual.includes('.css-imported-with-css {}'))
-	t.snapshot(actual)
 })
 
 test('it finds css in a <link> tag - JS', async t => {
@@ -30,7 +29,6 @@ test('it finds css in a <link> tag - JS', async t => {
 	t.true(actual.includes('.link-tag-created-with-js {}'))
 	t.true(actual.includes('@import url("import-in-css.css")'))
 	t.true(actual.includes('.css-imported-with-css {}'))
-	t.snapshot(actual)
 })
 
 test('it finds css in a <style> tag - HTML', async t => {
