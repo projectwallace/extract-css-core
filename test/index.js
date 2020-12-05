@@ -63,7 +63,9 @@ test('it finds CSS implemented in a mixed methods (inline, links, style tags)', 
 	t.true(actual.includes('@import url("import-in-css.css")'))
 	t.true(actual.includes('.css-imported-with-css {}'))
 	t.true(actual.includes('[x-extract-css-inline-style]'))
-	t.snapshot(actual)
+	t.true(actual.includes('[x-extract-css-inline-style] { background-image: url(\'background-image-inline-style-attribute-in-html\'); }'))
+	t.true(actual.includes('[x-extract-css-inline-style] { background-image: url("background-image-inline-style-js-cssText"); }'))
+	t.true(actual.includes('[x-extract-css-inline-style] { background-image: url("background-image-inline-style-js-with-prop"); }'))
 })
 
 test('it finds inline styles - HTML', async t => {
