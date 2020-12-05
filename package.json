@@ -21,7 +21,7 @@
 	],
 	"main": "src/index.js",
 	"engines": {
-		"node": ">=8.0"
+		"node": ">=10.0"
 	},
 	"devDependencies": {
 		"@bartveneman/eslint-config-bv": "0.0.2",
