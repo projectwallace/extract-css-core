@@ -25,10 +25,10 @@
 	},
 	"devDependencies": {
 		"@bartveneman/eslint-config-bv": "0.0.2",
-		"ava": "^3.13.0",
+		"ava": "^3.15.0",
 		"create-test-server": "^3.0.1",
-		"eslint": "^7.15.0",
-		"sirv": "^1.0.7"
+		"eslint": "^7.20.0",
+		"sirv": "^1.0.11"
 	},
 	"dependencies": {
 		"normalize-url": "^5.3.0",
