@@ -16,16 +16,16 @@ InvalidUrlError.prototype = Error.prototype
  * @returns {string} All CSS that was found
  */
 module.exports = async (
-	url, 
-	{ 
+	url,
+	{
 		waitUntil = 'networkidle0',
-		origins = 'exclude', 
-		launchOptions = { 
+		origins = 'exclude',
+		launchOptions = {
 			headless: true,
-			args: [],
+			args: []
 		}
 	} = {}
-	) => {
+) => {
 	// Setup a browser instance
 	const browser = await puppeteer.launch(launchOptions)
 
