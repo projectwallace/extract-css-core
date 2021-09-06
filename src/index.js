@@ -12,11 +12,22 @@ InvalidUrlError.prototype = Error.prototype
 /**
  * @param {string} url URL to get CSS from
  * @param {string} waitUntil https://github.com/puppeteer/puppeteer/blob/master/docs/api.md#pagegotourl-options
+ * @param {Object} launchOptions https://github.com/puppeteer/puppeteer/blob/main/docs/api.md#puppeteerlaunchoptions
  * @returns {string} All CSS that was found
  */
-module.exports = async (url, {waitUntil = 'networkidle0', origins = 'exclude'} = {}) => {
+module.exports = async (
+	url, 
+	{ 
+		waitUntil = 'networkidle0',
+		origins = 'exclude', 
+		launchOptions = { 
+			headless: true,
+			args: [],
+		}
+	} = {}
+	) => {
 	// Setup a browser instance
-	const browser = await puppeteer.launch()
+	const browser = await puppeteer.launch(launchOptions)
 
 	// Create a new page and navigate to it
 	const page = await browser.newPage()
