@@ -2,7 +2,7 @@
 const puppeteer = require('puppeteer')
 const normalizeUrl = require('normalize-url')
 
-function InvalidUrlError({url, statusCode, statusText}) {
+function InvalidUrlError({ url, statusCode, statusText }) {
 	this.name = 'InvalidUrlError'
 	this.message = `There was an error retrieving CSS from ${url}.\n\tHTTP status code: ${statusCode} (${statusText})`
 }
@@ -14,7 +14,7 @@ InvalidUrlError.prototype = Error.prototype
  * @param {string} waitUntil https://github.com/puppeteer/puppeteer/blob/master/docs/api.md#pagegotourl-options
  * @returns {string} All CSS that was found
  */
-module.exports = async (url, {waitUntil = 'networkidle0', origins = 'exclude'} = {}) => {
+module.exports = async (url, { waitUntil = 'networkidle0', origins = 'exclude', inlineStyles = 'include' } = {}) => {
 	// Setup a browser instance
 	const browser = await puppeteer.launch()
 
@@ -25,8 +25,8 @@ module.exports = async (url, {waitUntil = 'networkidle0', origins = 'exclude'} =
 	// `HeadlessChrome/88.0.4298.0` and some websites/CDN's block that with a HTTP 403
 	await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10.16; rv:85.0) Gecko/20100101 Firefox/85.0')
 	await page.coverage.startCSSCoverage()
-	url = normalizeUrl(url, {stripWWW: false})
-	const response = await page.goto(url, {waitUntil})
+	url = normalizeUrl(url, { stripWWW: false })
+	const response = await page.goto(url, { waitUntil })
 
 	// Make sure that we only try to extract CSS from valid pages.
 	// Bail out if the response is an invalid request (400, 500)
@@ -65,7 +65,7 @@ module.exports = async (url, {waitUntil = 'networkidle0', origins = 'exclude'} =
 				return {
 					type: stylesheet.ownerNode.tagName.toLowerCase(),
 					href: stylesheet.href || document.location.href,
-					css: [...stylesheet.cssRules].map(({cssText}) => cssText).join('\n')
+					css: [...stylesheet.cssRules].map(({ cssText }) => cssText).join('\n')
 				}
 			})
 	})
@@ -82,15 +82,18 @@ module.exports = async (url, {waitUntil = 'networkidle0', origins = 'exclude'} =
 	// CSSRule:
 	//    [x-extract-css-inline-style] { color: red; }
 	//
-	const inlineCssRules = await page.evaluate(() => {
-		return [...document.querySelectorAll('[style]')]
-			.map(element => element.getAttribute('style'))
-			// Filter out empty style="" attributes
-			.filter(Boolean)
-	})
-	const inlineCss = inlineCssRules
-		.map(rule => `[x-extract-css-inline-style] { ${rule} }`)
-		.map(css => ({type: 'inline', href: url, css}))
+	let inlineCss
+	if (inlineStyles !== 'exclude') {
+		const inlineCssRules = await page.evaluate(() => {
+			return [...document.querySelectorAll('[style]')]
+				.map(element => element.getAttribute('style'))
+				// Filter out empty style="" attributes
+				.filter(Boolean)
+		})
+		inlineCss = inlineCssRules
+			.map(rule => `[x-extract-css-inline-style] { ${rule} }`)
+			.map(css => ({ type: 'inline', href: url, css }))
+	}
 
 	const links = coverage
 		// Filter out the <style> tags that were found in the coverage
@@ -106,9 +109,11 @@ module.exports = async (url, {waitUntil = 'networkidle0', origins = 'exclude'} =
 
 	await browser.close()
 
-	const css = links
-		.concat(styleSheetsApiCss)
-		.concat(inlineCss)
+	const css = links.concat(styleSheetsApiCss)
+
+	if (inlineStyles !== 'exclude') {
+		css.concat(inlineCss)
+	}
 
 	// Return the complete structure ...
 	if (origins === 'include') {
@@ -118,7 +123,7 @@ module.exports = async (url, {waitUntil = 'networkidle0', origins = 'exclude'} =
 	// ... or return all CSS as a single String
 	return Promise.resolve(
 		css
-			.map(({css}) => css)
+			.map(({ css }) => css)
 			.join('\n')
 	)
 }

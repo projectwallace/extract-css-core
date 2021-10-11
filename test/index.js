@@ -84,6 +84,16 @@ test('it finds inline styles - JS', async t => {
 	t.snapshot(actual)
 })
 
+test('it ignores inline styles when the flag `ignoreInline` is enabled', async t => {
+	const actual = await extractCss(server.url + '/inline-style-js.html', {
+		inlineStyles: 'exclude'
+	})
+
+	t.false(actual.includes('[x-extract-css-inline-style] { color: red; font-size: 12px; border-style: solid; }'))
+	t.false(actual.includes('[x-extract-css-inline-style] { border-color: blue; border-width: 1px; }'))
+	t.snapshot(actual)
+})
+
 test('it yields an array of entries when the `origins` option equals `include`', async t => {
 	const actual = await extractCss(server.url + '/kitchen-sink.html', {
 		origins: 'include'
