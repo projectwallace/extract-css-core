@@ -14,9 +14,7 @@
 		"get-css"
 	],
 	"scripts": {
-		"test": "ava && npm run lint",
-		"ava": "ava",
-		"lint": "eslint ./src ./test"
+		"test": "eslint ./src ./test && uvu test"
 	},
 	"files": [
 		"src"
@@ -27,10 +25,10 @@
 	},
 	"devDependencies": {
 		"@bartveneman/eslint-config-bv": "0.0.2",
-		"ava": "^3.15.0",
 		"create-test-server": "^3.0.1",
 		"eslint": "^7.32.0",
-		"sirv": "^1.0.17"
+		"sirv": "^1.0.17",
+		"uvu": "^0.5.2"
 	},
 	"dependencies": {
 		"normalize-url": "^5.3.0",
