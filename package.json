@@ -14,7 +14,7 @@
 		"get-css"
 	],
 	"scripts": {
-		"test": "eslint ./src ./test && uvu test"
+		"test": "uvu test && eslint ./src ./test"
 	},
 	"files": [
 		"src"
