@@ -14,7 +14,7 @@ InvalidUrlError.prototype = Error.prototype
  * @param {string} waitUntil https://github.com/puppeteer/puppeteer/blob/master/docs/api.md#pagegotourl-options
  * @returns {string} All CSS that was found
  */
-module.exports = async (url, {waitUntil = 'networkidle0', origins = 'exclude'} = {}) => {
+module.exports = async (url, {waitUntil = 'networkidle0', origins = 'exclude', inlineStyles = 'include'} = {}) => {
 	// Setup a browser instance
 	const browser = await puppeteer.launch()
 
@@ -82,15 +82,18 @@ module.exports = async (url, {waitUntil = 'networkidle0', origins = 'exclude'} =
 	// CSSRule:
 	//    [x-extract-css-inline-style] { color: red; }
 	//
-	const inlineCssRules = await page.evaluate(() => {
-		return [...document.querySelectorAll('[style]')]
-			.map(element => element.getAttribute('style'))
-			// Filter out empty style="" attributes
-			.filter(Boolean)
-	})
-	const inlineCss = inlineCssRules
-		.map(rule => `[x-extract-css-inline-style] { ${rule} }`)
-		.map(css => ({type: 'inline', href: url, css}))
+	let inlineCss = []
+	if (inlineStyles !== 'exclude') {
+		const inlineCssRules = await page.evaluate(() => {
+			return [...document.querySelectorAll('[style]')]
+				.map(element => element.getAttribute('style'))
+				// Filter out empty style="" attributes
+				.filter(Boolean)
+		})
+		inlineCss = inlineCssRules
+			.map(rule => `[x-extract-css-inline-style] { ${rule} }`)
+			.map(css => ({type: 'inline', href: url, css}))
+	}
 
 	const links = coverage
 		// Filter out the <style> tags that were found in the coverage
@@ -108,7 +111,7 @@ module.exports = async (url, {waitUntil = 'networkidle0', origins = 'exclude'} =
 
 	const css = links
 		.concat(styleSheetsApiCss)
-		.concat(inlineCss)
+		.concat(inlineStyles === 'exclude' ? [] : inlineCss)
 
 	// Return the complete structure ...
 	if (origins === 'include') {
