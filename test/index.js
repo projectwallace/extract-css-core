@@ -40,6 +40,17 @@ test('it finds css in a <style> tag - HTML', async t => {
 	t.snapshot(actual)
 })
 
+// This is an issue with chrome-aws-lambda, so let's make sure
+// it doesn't happen here too.
+test('it reports CSS in a <style> tag in HTML only once', async t => {
+	const actual = await extractCss(server.url + '/style-tag-html.html')
+
+	const firstOccurence = actual.indexOf('.fixture')
+	const lastOccurence = actual.lastIndexOf('.fixture')
+
+	t.is(firstOccurence, lastOccurence)
+})
+
 test('it finds css in a <style> tag - JS', async t => {
 	const actual = await extractCss(server.url + '/style-tag-js.html')
 
@@ -84,7 +95,7 @@ test('it finds inline styles - JS', async t => {
 	t.snapshot(actual)
 })
 
-test('it yields an array of entries when the `origins` option equals `include`', async t => {
+test('it returns an array of entries when the `origins` option equals `include`', async t => {
 	const actual = await extractCss(server.url + '/kitchen-sink.html', {
 		origins: 'include'
 	})

@@ -14,7 +14,9 @@
 		"get-css"
 	],
 	"scripts": {
-		"test": "eslint ./src ./test && ava"
+		"test": "ava && npm run lint",
+		"ava": "ava",
+		"lint": "eslint ./src ./test"
 	},
 	"files": [
 		"src"
