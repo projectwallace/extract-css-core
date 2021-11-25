@@ -87,6 +87,16 @@ test('it finds inline styles - HTML', async t => {
 	t.snapshot(actual)
 })
 
+test('it ignores inline styles when `inlineStyles !== "include"`', async t => {
+	const actual = await extractCss(server.url + '/inline-style-html.html', {
+		inlineStyles: 'exclude'
+	})
+
+	t.false(actual.includes('[x-extract-css-inline-style] { color: red; font-size: 12px; }'))
+	t.false(actual.includes('[x-extract-css-inline-style] { color: blue }'))
+	t.is(actual, '')
+})
+
 test('it finds inline styles - JS', async t => {
 	const actual = await extractCss(server.url + '/inline-style-js.html')
 

@@ -56,9 +56,9 @@ npm install extract-css-core
 yarn add extract-css-core
 ```
 
-## Problem, solution and shortcomings
+## Motivation, solution and shortcomings
 
-### Problem
+### Motivation
 
 Existing packages like
 [get-css](https://github.com/cssstats/cssstats/tree/master/packages/get-css)
@@ -92,6 +92,14 @@ Default: `{}`
 Type: `String`
 
 Default: `exclude`
+
+Possible values: `exclude`, `include`
+
+#### inlineStyles
+
+Type: `String`
+
+Default: `include`
 
 Possible values: `exclude`, `include`
 
