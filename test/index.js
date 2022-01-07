@@ -145,3 +145,15 @@ test('it rejects if the url has an HTTP error status', async t => {
 test('it rejects on an invalid url', async t => {
 	await t.throwsAsync(extractCss('site.example'))
 })
+
+test('it rejects on server timing out', async t => {
+	server.get('/timeout-page', (req, res) => {
+		setTimeout(function () {
+			res.status(500).send()
+		}, 5000)
+	})
+	const timoutUrl = server.url + '/timeout-page'
+	await t.throwsAsync(extractCss(timoutUrl, {timeout: 4500}), {
+		message: 'Navigation timeout of 4500 ms exceeded'
+	})
+})

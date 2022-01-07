@@ -12,9 +12,17 @@ InvalidUrlError.prototype = Error.prototype
 /**
  * @param {string} url URL to get CSS from
  * @param {string} waitUntil https://github.com/puppeteer/puppeteer/blob/master/docs/api.md#pagegotourl-options
+ * @param {string} timeout https://github.com/puppeteer/puppeteer/blob/master/docs/api.md#pagegotourl-options
+ * @param {string} origins Can either be 'include' or 'exlude'
+ * @param {string} inlineStyles Can either be 'include' or 'exlude'
  * @returns {string} All CSS that was found
  */
-module.exports = async (url, {waitUntil = 'networkidle0', origins = 'exclude', inlineStyles = 'include'} = {}) => {
+module.exports = async (url, {
+	waitUntil = 'networkidle0',
+	timeout = 10000,
+	origins = 'exclude',
+	inlineStyles = 'include'
+} = {}) => {
 	// Setup a browser instance
 	const browser = await puppeteer.launch()
 
@@ -26,20 +34,32 @@ module.exports = async (url, {waitUntil = 'networkidle0', origins = 'exclude', i
 	await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10.16; rv:85.0) Gecko/20100101 Firefox/85.0')
 	await page.coverage.startCSSCoverage()
 	url = normalizeUrl(url, {stripWWW: false})
-	const response = await page.goto(url, {waitUntil})
+
+	let response
+
+	// Explicit try-catch for when pages timeout
+	try {
+		response = await page.goto(url, {
+			waitUntil,
+			timeout
+		})
+	} catch (error) {
+		// In case of timeouts
+		await browser.close()
+
+		throw error
+	}
 
 	// Make sure that we only try to extract CSS from valid pages.
 	// Bail out if the response is an invalid request (400, 500)
 	if (response.status() >= 400) {
 		await browser.close() // Don't leave any resources behind
 
-		return Promise.reject(
-			new InvalidUrlError({
-				url,
-				statusCode: response.status(),
-				statusText: response.statusText()
-			})
-		)
+		throw new InvalidUrlError({
+			url,
+			statusCode: response.status(),
+			statusText: response.statusText()
+		})
 	}
 
 	// If the response is a CSS file, return that file
@@ -47,8 +67,7 @@ module.exports = async (url, {waitUntil = 'networkidle0', origins = 'exclude', i
 	const headers = response.headers()
 
 	if (headers['content-type'].includes('text/css')) {
-		const css = await response.text()
-		return Promise.resolve(css)
+		return response.text()
 	}
 
 	const coverage = await page.coverage.stopCSSCoverage()
@@ -95,6 +114,8 @@ module.exports = async (url, {waitUntil = 'networkidle0', origins = 'exclude', i
 			.map(css => ({type: 'inline', href: url, css}))
 	}
 
+	await browser.close()
+
 	const links = coverage
 		// Filter out the <style> tags that were found in the coverage
 		// report since we've conducted our own search for them.
@@ -107,21 +128,17 @@ module.exports = async (url, {waitUntil = 'networkidle0', origins = 'exclude', i
 			type: 'link-or-import'
 		}))
 
-	await browser.close()
-
 	const css = links
 		.concat(styleSheetsApiCss)
 		.concat(inlineStyles === 'exclude' ? [] : inlineCss)
 
 	// Return the complete structure ...
 	if (origins === 'include') {
-		return Promise.resolve(css)
+		return css
 	}
 
 	// ... or return all CSS as a single String
-	return Promise.resolve(
-		css
-			.map(({css}) => css)
-			.join('\n')
-	)
+	return css
+		.map(({css}) => css)
+		.join('\n')
 }
