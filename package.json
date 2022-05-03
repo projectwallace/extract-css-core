@@ -25,8 +25,8 @@
 	},
 	"devDependencies": {
 		"create-test-server": "^3.0.1",
-		"sirv": "^1.0.17",
-		"uvu": "^0.5.2"
+		"sirv": "^1.0.19",
+		"uvu": "^0.5.3"
 	},
 	"dependencies": {
 		"normalize-url": "^5.3.0",
