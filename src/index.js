@@ -2,7 +2,7 @@
 const puppeteer = require('puppeteer')
 const normalizeUrl = require('normalize-url')
 
-function InvalidUrlError({ url, statusCode, statusText }) {
+function InvalidUrlError({url, statusCode, statusText}) {
 	this.name = 'InvalidUrlError'
 	this.message = `There was an error retrieving CSS from ${url}.\n\tHTTP status code: ${statusCode} (${statusText})`
 }
@@ -33,7 +33,7 @@ module.exports = async (url, {
 	// `HeadlessChrome/88.0.4298.0` and some websites/CDN's block that with a HTTP 403
 	await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10.16; rv:85.0) Gecko/20100101 Firefox/85.0')
 
-	url = normalizeUrl(url, { stripWWW: false })
+	url = normalizeUrl(url, {stripWWW: false})
 
 	let response
 
@@ -132,7 +132,7 @@ module.exports = async (url, {
 		})
 		inlineCss = inlineCssRules
 			.map(rule => `[x-extract-css-inline-style] { ${rule} }`)
-			.map(css => ({ type: 'inline', href: url, css }))
+			.map(css => ({type: 'inline', href: url, css}))
 	}
 
 	await browser.close()
@@ -146,6 +146,6 @@ module.exports = async (url, {
 
 	// ... or return all CSS as a single String
 	return css
-		.map(({ css }) => css)
+		.map(({css}) => css)
 		.join('\n')
 }

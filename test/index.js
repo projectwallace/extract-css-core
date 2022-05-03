@@ -157,7 +157,7 @@ test('it rejects on server timing out', async t => {
 		}, 5000)
 	})
 	const timoutUrl = server.url + '/timeout-page'
-	await t.throwsAsync(extractCss(timoutUrl, { timeout: 4500 }), {
+	await t.throwsAsync(extractCss(timoutUrl, {timeout: 4500}), {
 		message: 'Navigation timeout of 4500 ms exceeded'
 	})
 })
