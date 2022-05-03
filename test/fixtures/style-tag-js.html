@@ -1,16 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Document</title>
 </head>
+
 <body>
 	<h1 class="fixture">&lt;style> tag in JS</h1>
 	<script>
 		var style = document.createElement('style')
-		style.textContent = '@import url("import-in-js.css");.fixture { color: red; }'
+		style.textContent = '@import url("import-in-js.css");.css-in-style { color: red; }'
 		document.body.appendChild(style)
 	</script>
 </body>
+
 </html>
