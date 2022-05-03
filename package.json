@@ -24,12 +24,12 @@
 		"node": ">=10.0"
 	},
 	"devDependencies": {
-		"create-test-server": "^3.0.1",
-		"sirv": "^1.0.19",
-		"uvu": "^0.5.3"
+		"create-test-server": "3.0.1",
+		"sirv": "1.0.19",
+		"uvu": "0.5.3"
 	},
 	"dependencies": {
-		"normalize-url": "^5.3.0",
+		"normalize-url": "6.1.0",
 		"puppeteer": "^7.1.0"
 	}
 }
