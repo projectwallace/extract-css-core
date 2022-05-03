@@ -79,15 +79,17 @@ module.exports = async (url, {
 			var styleType = stylesheet.ownerNode ?
 				stylesheet.ownerNode.tagName.toLowerCase() :
 				'import'
+
 			var sheetCss = ''
 
-			for (var rule of stylesheet.rules) {
-				sheetCss += rule.cssText
-
+			for (var rule of stylesheet.cssRules) {
+				// eslint-disable-next-line no-undef
 				if (rule instanceof CSSImportRule) {
 					var imported = getCssFromStyleSheet(rule.styleSheet)
 					items = items.concat(imported)
 				}
+
+				sheetCss += rule.cssText
 
 				items.push({
 					type: styleType,
@@ -135,8 +137,7 @@ module.exports = async (url, {
 
 	await browser.close()
 
-	const css = styleSheetsApiCss
-		.concat(inlineStyles === 'exclude' ? [] : inlineCss)
+	const css = styleSheetsApiCss.concat(inlineCss)
 
 	// Return the complete structure ...
 	if (origins === 'include') {
