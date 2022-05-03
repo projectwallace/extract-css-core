@@ -1,7 +1,7 @@
 {
 	"name": "extract-css-core",
 	"description": "Extract all CSS from a given url, both server side and client side rendered.",
-	"version": "2.3.1",
+	"version": "3.0.0",
 	"homepage": "https://www.projectwallace.com/oss",
 	"repository": "https://github.com/projectwallace/extract-css-core",
 	"issues": "https://github.com/projectwallace/extract-css-core/issues",
