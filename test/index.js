@@ -20,15 +20,15 @@ test('it finds css in a <link> tag - HTML', async t => {
 
 	t.true(actual.includes('.link-in-html { }'))
 	t.true(actual.includes('@import url("import-in-css.css")'))
-	t.true(actual.includes('.css-imported-with-css {}'))
+	t.true(actual.includes('.css-imported-with-css { }'))
 })
 
 test('it finds css in a <link> tag - JS', async t => {
 	const actual = await extractCss(server.url + '/link-tag-js.html')
 
-	t.true(actual.includes('.link-tag-created-with-js {}'))
+	t.true(actual.includes('.link-tag-created-with-js'))
 	t.true(actual.includes('@import url("import-in-css.css")'))
-	t.true(actual.includes('.css-imported-with-css {}'))
+	t.true(actual.includes('.css-imported-with-css { }'))
 })
 
 test('it finds css in a <style> tag - HTML', async t => {
@@ -36,7 +36,7 @@ test('it finds css in a <style> tag - HTML', async t => {
 
 	t.true(actual.includes('.fixture { color: red; }'))
 	t.true(actual.includes('@import url("import-in-css.css")'))
-	t.true(actual.includes('.css-imported-with-css {}'))
+	t.true(actual.includes('.css-imported-with-css { }'))
 	t.snapshot(actual)
 })
 
@@ -56,7 +56,7 @@ test('it finds css in a <style> tag - JS', async t => {
 
 	t.true(actual.includes('.fixture { color: red; }'))
 	t.true(actual.includes('@import url("import-in-js.css")'))
-	t.true(actual.includes('.css-imported-with-js {}'))
+	t.true(actual.includes('.css-imported-with-js { }'))
 	t.snapshot(actual)
 })
 
@@ -72,7 +72,7 @@ test('it finds CSS implemented in a mixed methods (inline, links, style tags)', 
 	const actual = await extractCss(server.url + '/kitchen-sink.html')
 
 	t.true(actual.includes('@import url("import-in-css.css")'))
-	t.true(actual.includes('.css-imported-with-css {}'))
+	t.true(actual.includes('.css-imported-with-css { }'))
 	t.true(actual.includes('[x-extract-css-inline-style]'))
 	t.true(actual.includes('[x-extract-css-inline-style] { background-image: url(\'background-image-inline-style-attribute-in-html\'); }'))
 	t.true(actual.includes('[x-extract-css-inline-style] { background-image: url("background-image-inline-style-js-cssText"); }'))
@@ -111,13 +111,13 @@ test('it returns an array of entries when the `origins` option equals `include`'
 	})
 
 	t.true(Array.isArray(actual), 'Result should be an array when { origins: `include` }')
-	t.is(actual.length, 10)
+	t.is(actual.length, 12)
 
 	function isString(item) {
 		return typeof item === 'string'
 	}
 
-	t.true(actual.every(item => isString(item.type) && ['link-or-import', 'style', 'inline'].includes(item.type)))
+	t.true(actual.every(item => isString(item.type) && ['link', 'import', 'style', 'inline'].includes(item.type)))
 	t.true(actual.every(item => isString(item.href)))
 	t.true(actual.every(item => item.href.startsWith('http://localhost:') && /\.(html|css)$/.test(item.href)))
 	t.true(actual.every(item => isString(item.css)))
@@ -153,7 +153,7 @@ test('it rejects on server timing out', async t => {
 		}, 5000)
 	})
 	const timoutUrl = server.url + '/timeout-page'
-	await t.throwsAsync(extractCss(timoutUrl, {timeout: 4500}), {
+	await t.throwsAsync(extractCss(timoutUrl, { timeout: 4500 }), {
 		message: 'Navigation timeout of 4500 ms exceeded'
 	})
 })

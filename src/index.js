@@ -2,7 +2,7 @@
 const puppeteer = require('puppeteer')
 const normalizeUrl = require('normalize-url')
 
-function InvalidUrlError({url, statusCode, statusText}) {
+function InvalidUrlError({ url, statusCode, statusText }) {
 	this.name = 'InvalidUrlError'
 	this.message = `There was an error retrieving CSS from ${url}.\n\tHTTP status code: ${statusCode} (${statusText})`
 }
@@ -32,8 +32,8 @@ module.exports = async (url, {
 	// Set an explicit UserAgent, because the default UserAgent string includes something like
 	// `HeadlessChrome/88.0.4298.0` and some websites/CDN's block that with a HTTP 403
 	await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10.16; rv:85.0) Gecko/20100101 Firefox/85.0')
-	await page.coverage.startCSSCoverage()
-	url = normalizeUrl(url, {stripWWW: false})
+
+	url = normalizeUrl(url, { stripWWW: false })
 
 	let response
 
@@ -70,23 +70,42 @@ module.exports = async (url, {
 		return response.text()
 	}
 
-	const coverage = await page.coverage.stopCSSCoverage()
-
 	// Get all CSS generated with the CSSStyleSheet API
 	// This is primarily for CSS-in-JS solutions
 	// See: https://developer.mozilla.org/en-US/docs/Web/API/CSSRule/cssText
 	const styleSheetsApiCss = await page.evaluate(() => {
-		return [...document.styleSheets]
-			// Only take the stylesheets without href, because those with href are
-			// <link> tags, and we already tackled those with the Coverage API
-			.filter(stylesheet => stylesheet.href === null)
-			.map(stylesheet => {
-				return {
-					type: stylesheet.ownerNode.tagName.toLowerCase(),
-					href: stylesheet.href || document.location.href,
-					css: [...stylesheet.cssRules].map(({cssText}) => cssText).join('\n')
+		function getCssFromStyleSheet(stylesheet) {
+			var items = []
+			var styleType = stylesheet.ownerNode ?
+				stylesheet.ownerNode.tagName.toLowerCase() :
+				'import'
+			var sheetCss = ''
+
+			for (var rule of stylesheet.rules) {
+				sheetCss += rule.cssText
+
+				if (rule instanceof CSSImportRule) {
+					var imported = getCssFromStyleSheet(rule.styleSheet)
+					items = items.concat(imported)
 				}
-			})
+
+				items.push({
+					type: styleType,
+					href: stylesheet.href || document.location.href,
+					css: sheetCss
+				})
+			}
+
+			return items
+		}
+
+		let styles = []
+
+		for (const stylesheet of document.styleSheets) {
+			styles = styles.concat(getCssFromStyleSheet(stylesheet))
+		}
+
+		return styles
 	})
 
 	// Get all inline styles: <element style="">
@@ -111,25 +130,12 @@ module.exports = async (url, {
 		})
 		inlineCss = inlineCssRules
 			.map(rule => `[x-extract-css-inline-style] { ${rule} }`)
-			.map(css => ({type: 'inline', href: url, css}))
+			.map(css => ({ type: 'inline', href: url, css }))
 	}
 
 	await browser.close()
 
-	const links = coverage
-		// Filter out the <style> tags that were found in the coverage
-		// report since we've conducted our own search for them.
-		// A coverage CSS item with the same url as the url of the page
-		// we requested is an indication that this was a <style> tag
-		.filter(entry => entry.url !== url)
-		.map(entry => ({
-			href: entry.url,
-			css: entry.text,
-			type: 'link-or-import'
-		}))
-
-	const css = links
-		.concat(styleSheetsApiCss)
+	const css = styleSheetsApiCss
 		.concat(inlineStyles === 'exclude' ? [] : inlineCss)
 
 	// Return the complete structure ...
@@ -139,6 +145,6 @@ module.exports = async (url, {
 
 	// ... or return all CSS as a single String
 	return css
-		.map(({css}) => css)
+		.map(({ css }) => css)
 		.join('\n')
 }
