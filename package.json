@@ -29,6 +29,7 @@
 		"uvu": "0.5.3"
 	},
 	"dependencies": {
+		"got": "11.8.3",
 		"normalize-url": "6.1.0",
 		"puppeteer": "13.7.0"
 	}

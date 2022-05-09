@@ -8,26 +8,26 @@ const extractCss = require('..')
 
 let server
 
-Test.before(async () => {
+Test.before.each(async () => {
   server = await createTestServer()
   server.use(sirv('test/fixtures'))
 })
 
-Test.after(async () => {
+Test.after.each(async () => {
   await server.close()
 })
 
 Test('finds CSS directly from <style>', async () => {
   const actual = await extractCss(server.url + '/style-tag-html.html')
 
-  assert.ok(actual.includes('.style-in-html'))
-  assert.ok(actual.includes('@import url("import-in-css.css")'))
+  assert.ok(actual.includes('.style-in-html'), 'Could not find `.style-in-html` selector')
+  assert.ok(actual.includes('@import url("import-in-css.css")'), `Could not find @import rule`)
 })
 
 Test('finds CSS from @import\'ed CSS file within <style>', async () => {
   const actual = await extractCss(server.url + '/style-tag-html.html')
 
-  assert.ok(actual.includes('.css-imported-with-css { }'))
+  assert.ok(actual.includes('.css-imported-with-css{color:#000;}'), `Could not find minified CSS from @import`)
 })
 
 Test.run()

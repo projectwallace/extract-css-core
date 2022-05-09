@@ -20,14 +20,16 @@ Test.after(async () => {
 Test('finds CSS directly from <link>\'ed file', async () => {
   const actual = await extractCss(server.url + '/link-tag-html.html')
 
-  assert.ok(actual.includes('.link-in-html { }'))
-  assert.ok(actual.includes('@import url("import-in-css.css")'))
+  assert.ok(actual.includes('.unminified {'), 'Could not find unminified selector in <link>')
+  assert.ok(actual.includes('color: rgb(255, 0, 0);'), 'Could not find unminified declaration in <link>')
+  assert.ok(actual.includes('.minified{color:red}'), 'Could not find minified RuleSet in <link>')
+  assert.ok(actual.includes('@import url("import-in-css.css")'), 'Could not find @import in <link>')
 })
 
 Test('finds CSS from @import\'ed CSS file', async () => {
   const actual = await extractCss(server.url + '/link-tag-html.html')
 
-  assert.ok(actual.includes('.css-imported-with-css { }'))
+  assert.ok(actual.includes('.css-imported-with-css{color:#000;}'), 'Could not find minified CSS from @imported file in <link>')
 })
 
 Test.run()

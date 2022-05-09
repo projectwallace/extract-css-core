@@ -82,22 +82,45 @@ module.exports = async (url, {
 				stylesheet.ownerNode.tagName.toLowerCase() :
 				'import'
 
+			if (styleType === 'style') {
+				items.push({
+					type: 'style',
+					css: stylesheet.ownerNode.textContent,
+					href: document.location.href,
+				})
+			}
+
+			if (styleType === 'link') {
+				items.push({
+					type: 'link',
+					css: undefined,
+					href: stylesheet.ownerNode.href,
+				})
+			}
+
 			var sheetCss = ''
 
 			for (var rule of stylesheet.cssRules) {
 				// eslint-disable-next-line no-undef
 				if (rule instanceof CSSImportRule) {
+					items.push({
+						type: 'import',
+						href: rule.href,
+						css: undefined,
+					})
 					var imported = getCssFromStyleSheet(rule.styleSheet)
 					items = items.concat(imported)
 				}
 
-				sheetCss += rule.cssText
+				if (styleType === 'style') {
+					sheetCss += rule.cssText
 
-				items.push({
-					type: styleType,
-					href: stylesheet.href || document.location.href,
-					css: sheetCss
-				})
+					items.push({
+						type: 'style',
+						href: document.location.href,
+						css: sheetCss
+					})
+				}
 			}
 
 			return items
@@ -111,6 +134,13 @@ module.exports = async (url, {
 
 		return styles
 	})
+	console.log(styleSheetsApiCss)
+
+	// const allCss = await Promise.all(styleSheetsApiCss.map(item => {
+	// 	return {
+
+	// 	}
+	// }))
 
 	// Get all inline styles: <element style="">
 	// This creates a new CSSRule for every inline style

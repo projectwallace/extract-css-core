@@ -27,7 +27,7 @@ Test('finds CSS directly from <link>\'ed file', async () => {
 Test('it finds @import\'ed css', async () => {
   const actual = await extractCss(server.url + '/link-tag-js.html')
 
-  assert.ok(actual.includes('.css-imported-with-css { }'))
+  assert.ok(actual.includes('.css-imported-with-css{color:#000;}'))
 })
 
 Test.run()

@@ -1,20 +1,22 @@
 <!DOCTYPE html>
 <html>
-	<head>
+
+<head>
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
 	<title>Document</title>
-	</head>
+</head>
 
-	<body>
-		<h1 class="fixture">&lt;link> tag in JS</h1>
-		<div class="imported">imported</div>
-		<script>
-			var style = document.createElement('link')
-			style.href = 'link-tag-js.css'
-			style.rel = 'stylesheet'
-			document.head.appendChild(style)
-		</script>
-	</body>
+<body>
+	<h1 class="fixture">&lt;link> tag in JS</h1>
+	<div class="imported">imported</div>
+	<script>
+		var style = document.createElement('link')
+		style.href = 'link-tag-js.css?from=link-created-with-js'
+		style.rel = 'stylesheet'
+		document.head.appendChild(style)
+	</script>
+</body>
+
 </html>

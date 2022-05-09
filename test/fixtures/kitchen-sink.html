@@ -1,20 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Document</title>
 
 	<!-- <link> in HTML -->
-	<link rel="stylesheet" href="/link-in-html.css">
+	<link rel="stylesheet" href="/link-in-html.css?from=link-in-html">
 
 	<!-- <style> in HTML -->
 	<style>
-		.style-tag-in-html { color: green; }
+		.style-tag-in-html {
+			color: green;
+		}
 	</style>
 
 	<style id="js-insertRule"></style>
 </head>
+
 <body>
 
 	<div style="background-image: url('background-image-inline-style-attribute-in-html');"></div>
@@ -24,7 +28,7 @@
 	<!-- <link> tag in JS -->
 	<script>
 		var style = document.createElement('link')
-		style.href = 'link-tag-js.css'
+		style.href = 'link-tag-js.css?from=link-in-js'
 		style.rel = 'stylesheet'
 		document.head.appendChild(style)
 	</script>
@@ -52,4 +56,5 @@
 		sheet.insertRule('.js-insertRule { color: red; }')
 	</script>
 </body>
+
 </html>

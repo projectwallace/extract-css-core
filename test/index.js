@@ -21,7 +21,7 @@ Test('it finds CSS implemented in a mixed methods (inline, links, style tags)', 
 	const actual = await extractCss(server.url + '/kitchen-sink.html')
 
 	assert.ok(actual.includes('@import url("import-in-css.css")'))
-	assert.ok(actual.includes('.css-imported-with-css { }'))
+	assert.ok(actual.includes('.css-imported-with-css{color:#000;}'))
 	assert.ok(actual.includes('[x-extract-css-inline-style]'))
 	assert.ok(actual.includes('[x-extract-css-inline-style] { background-image: url(\'background-image-inline-style-attribute-in-html\'); }'))
 	assert.ok(actual.includes('[x-extract-css-inline-style] { background-image: url("background-image-inline-style-js-cssText"); }'))
@@ -51,7 +51,7 @@ Test('it yields an array of entries when the `origins` option equals `include`',
 Test('it returns a direct link to a CSS file', async () => {
 	const actual = await extractCss(server.url + '/import-in-css.css')
 
-	assert.equal(actual, '.css-imported-with-css {}')
+	assert.equal(actual, '.css-imported-with-css{color:#000}')
 })
 
 Test('it rejects if the url has an HTTP error status', async () => {

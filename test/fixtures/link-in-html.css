@@ -1,3 +1,9 @@
-@import url("import-in-css.css");
+@import url("import-in-css.css?from=css-import");
 
 .link-in-html { }
+
+.unminified {
+  color: rgb(255, 0, 0);
+}
+
+.minified{color:red}

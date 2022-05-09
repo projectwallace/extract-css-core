@@ -11,7 +11,7 @@
 	<h1 class="fixture">&lt;style> tag in JS</h1>
 	<script>
 		var style = document.createElement('style')
-		style.textContent = '@import url("import-in-js.css");.css-in-style { color: red; }'
+		style.textContent = '@import url("import-in-js.css?from=css-in-js");.css-in-style { color: red; }'
 		document.body.appendChild(style)
 	</script>
 </body>
